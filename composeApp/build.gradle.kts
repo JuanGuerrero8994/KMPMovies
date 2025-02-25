@@ -91,12 +91,8 @@ kotlin {
             implementation(libs.navigation.compose)
 
             //COIL
-            implementation(libs.ktor.client.core)
-            implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
-            implementation(libs.coil.mp)
-            implementation(libs.coil.network.ktor)
-
+            implementation(libs.coil.network.okhttp)
 
             //NAPIER LOGS
             implementation(libs.napier)
