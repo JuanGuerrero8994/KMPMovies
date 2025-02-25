@@ -45,7 +45,7 @@ jobs:
 
       - name: 🚀 Guardar APK generado (solo en developer)
         if: github.ref == 'refs/heads/developer'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
           path: app/build/outputs/apk/debug/app-debug.apk
