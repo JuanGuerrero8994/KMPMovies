@@ -10,11 +10,13 @@ object MovieMapper {
             title = movieResponse.title,
             overview = movieResponse.overview,
             posterUrl = "https://image.tmdb.org/t/p/w500${movieResponse.posterPath}",
-            releaseDate = movieResponse.releaseDate
+            releaseDate = movieResponse.releaseDate,
+            voteAverage = movieResponse.voteAverage,
+            voteCount = movieResponse.voteCount,
+            popularity = movieResponse.popularity
         )
     }
 
-    fun toDomainList(movieResponseList: List<MovieResponse>): List<Movie> {
-        return movieResponseList.map { toDomain(it) }
-    }
+    fun toDomainList(movieResponseList: List<MovieResponse>): List<Movie> = movieResponseList.map { toDomain(it) }
+
 }

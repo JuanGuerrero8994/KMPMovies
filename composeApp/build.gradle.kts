@@ -1,8 +1,9 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,8 +11,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
-
+    id("com.codingfeline.buildkonfig")
+    id("com.google.devtools.ksp")
+    id("dev.mokkery") version "2.7.0"
 }
+
+
 
 kotlin {
     androidTarget {
@@ -34,7 +39,7 @@ kotlin {
     
     jvm("desktop")
     
-    @OptIn(ExperimentalWasmDsl::class)
+    /*@OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
         browser {
@@ -52,11 +57,12 @@ kotlin {
             }
         }
         binaries.executable()
-    }
+    }*/
     
     sourceSets {
         val desktopMain by getting
-        
+        val commonTest by getting
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -73,6 +79,10 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+            //LOG TEST
+            implementation(libs.slf4j.api)  // SLF4J API
+            implementation(libs.logback.classic)  // Logback
 
             //KTOR
             implementation(libs.ktor.client.core)
@@ -92,15 +102,32 @@ kotlin {
 
             //COIL
             implementation(libs.coil.compose)
-            implementation(libs.coil.network.okhttp)
+            implementation(libs.coil.network.ktor)
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.mp)
 
             //NAPIER LOGS
             implementation(libs.napier)
+
+
+        }
+
+        commonTest{
+            dependencies {
+                implementation(kotlin("test")) // Para test unitarios en KMP
+                implementation(libs.koinTest)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.turbine)
+
+
+            }
         }
 
         iosMain.dependencies {
-
+            //KTOR
+            implementation(libs.ktor.client.darwin)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -109,6 +136,8 @@ kotlin {
 }
 
 android {
+
+
     namespace = "org.devjg.kmpmovies"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -149,4 +178,26 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
+buildkonfig {
+    packageName = "org.devjg.kmpmovies"
+
+    defaultConfigs {
+        buildConfigField (FieldSpec.Type.STRING, "TMDB_API_KEY", (localProperties.getProperty("TMDB_API_KEY") ?: "missing api key")
+        )
+    }
+}
+
+
+
+dependencies {
+    testImplementation("app.cash.turbine:turbine:0.4.0")
 }
