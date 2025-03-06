@@ -18,7 +18,7 @@ class TMDBApi {
     val httpClient by lazy {
         HttpClient(CIO) {
             engine {
-               // proxy = ProxyBuilder.http("http://proxy.jus.gov.ar:8080")
+              // proxy = ProxyBuilder.http("http://proxy.jus.gov.ar:8080")
             }
             install(ContentNegotiation) {
                 json(Json {

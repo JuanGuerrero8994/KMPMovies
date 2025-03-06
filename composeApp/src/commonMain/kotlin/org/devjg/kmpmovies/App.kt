@@ -2,6 +2,7 @@ package org.devjg.kmpmovies
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,8 +18,10 @@ fun App() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            val navController = rememberNavController()
-            NavGraph(navController = navController)
+            Scaffold {
+                val navController = rememberNavController()
+                NavGraph(navController = navController)
+            }
         }
     }
 }
