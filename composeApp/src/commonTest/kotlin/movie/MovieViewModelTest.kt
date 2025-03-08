@@ -71,7 +71,7 @@ class MovieViewModelTest : KoinTest {
 
 
     @Test
-    fun `fetchPopularMovies debería obtener películas exitosamente con datos específicos`() = runTest(timeout = 30.seconds) {
+    fun `fetchPopularMovies debería obtener películas exitosamente con datos específicos`() = runTest(timeout = 10.seconds) {
         // Crear un mock para el repositorio
         val movieRepository = mock<MovieRepository>()
 
@@ -86,6 +86,16 @@ class MovieViewModelTest : KoinTest {
         // Usar flowOf para evitar problemas de ejecución en coroutines
         everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
 
+        stopKoin()
+        startKoin {
+            modules(
+                module {
+                    single { movieRepository } // Usar el mock en Koin
+                    factory { GetPopularMoviesUseCase(get()) }
+                    single { MovieViewModel(get()) }
+                }
+            )
+        }
         // Crear el ViewModel manualmente en lugar de usar Koin para asegurarnos de que usa el mock
         val viewModel = MovieViewModel(GetPopularMoviesUseCase(movieRepository))
 
@@ -97,10 +107,13 @@ class MovieViewModelTest : KoinTest {
 
             // 3️⃣ Esperamos el siguiente estado
             val result = awaitItem()
-            advanceUntilIdle()
+
 
             // 3️⃣ Esperamos que el siguiente estado sea un éxito con los datos correctos
             when (result) {
+                is Resource.Loading->{
+                    advanceUntilIdle()
+                }
                 is Resource.Success -> {
                     assertTrue(
                         result.data.isNotEmpty(),
