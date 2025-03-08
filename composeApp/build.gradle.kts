@@ -1,7 +1,9 @@
+import com.android.build.api.dsl.Packaging
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -24,6 +26,7 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+
     }
     
     listOf(
@@ -109,17 +112,24 @@ kotlin {
             //NAPIER LOGS
             implementation(libs.napier)
 
-
+            // Exclude the logback dependencies to avoid duplicate META-INF files
+            configurations.all {
+                exclude(group = "ch.qos.logback", module = "logback-classic")
+                exclude(group = "ch.qos.logback", module = "logback-core")
+            }
         }
 
         commonTest{
             dependencies {
                 implementation(kotlin("test")) // Para test unitarios en KMP
+                implementation(kotlin("test-annotations-common"))
+
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.uiTest)
+
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
-
-
             }
         }
 
@@ -136,8 +146,6 @@ kotlin {
 }
 
 android {
-
-
     namespace = "org.devjg.kmpmovies"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -147,23 +155,27 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            exclude("META-INF/INDEX.LIST") // Exclude the conflicting INDEX.LIST
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
 dependencies {
     debugImplementation(compose.uiTooling)
 }
@@ -200,4 +212,8 @@ buildkonfig {
 
 dependencies {
     testImplementation("app.cash.turbine:turbine:0.4.0")
+
+    configurations.all {
+        exclude(group = "org.jetbrains.compose", module = "components-ui-tooling-preview")
+    }
 }

@@ -5,7 +5,7 @@ import org.devjg.kmpmovies.data.remote.TMDBApi
 import org.devjg.kmpmovies.data.repository.MovieRepositoryImpl
 import org.devjg.kmpmovies.domain.repository.MovieRepository
 import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
-import org.devjg.kmpmovies.ui.screen.home.MovieViewModel
+import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

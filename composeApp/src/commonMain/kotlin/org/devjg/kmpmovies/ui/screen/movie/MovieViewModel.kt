@@ -1,4 +1,4 @@
-package org.devjg.kmpmovies.ui.screen.home
+package org.devjg.kmpmovies.ui.screen.movie
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,9 +1,9 @@
 package org.devjg.kmpmovies.ui.screen.home
 
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import org.devjg.kmpmovies.ui.components.scaffold.home.CarrouselView
+import org.devjg.kmpmovies.ui.screen.movie.MovieCarouselScreen
+import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -14,6 +14,8 @@ fun HomeScreen(
     viewModel: MovieViewModel = koinViewModel()
 ) {
 
-    CarrouselView(viewModel, navController)
+    MovieCarouselScreen(viewModel,navController)
 }
+
+
 
