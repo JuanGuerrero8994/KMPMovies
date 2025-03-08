@@ -122,14 +122,11 @@ kotlin {
         commonTest{
             dependencies {
                 implementation(kotlin("test")) // Para test unitarios en KMP
-                implementation(kotlin("test-annotations-common"))
-
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.uiTest)
-
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
+
+
             }
         }
 
@@ -155,7 +152,6 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     packaging {
@@ -212,8 +208,4 @@ buildkonfig {
 
 dependencies {
     testImplementation("app.cash.turbine:turbine:0.4.0")
-
-    configurations.all {
-        exclude(group = "org.jetbrains.compose", module = "components-ui-tooling-preview")
-    }
 }
