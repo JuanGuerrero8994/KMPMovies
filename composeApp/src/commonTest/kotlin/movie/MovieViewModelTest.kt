@@ -22,9 +22,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
-import org.koin.test.inject
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,68 +30,29 @@ import kotlin.test.fail
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieViewModelTest : KoinTest {
 
-    private val viewModel: MovieViewModel by inject()
+    private val movieRepository = mock<MovieRepository>()
+    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
+    private val viewModel = MovieViewModel(getPopularMoviesUseCase)
 
-    private val testModule = module {
-        single { HttpClient() }
-        single { TMDBApi() }
-        single<MovieRepository> { MovieRepositoryImpl(get()) }
-        factory { GetPopularMoviesUseCase(get()) }
-        single { MovieViewModel(get()) }
-    }
-
-    @BeforeTest
-    fun setup() {
-        stopKoin()
-        startKoin { modules(testModule) }
-    }
-
-    @AfterTest
-    fun tearDown() {
-        stopKoin()
-    }
-
-    @Test
-    fun `fetchPopularMovies should fetch real data successfully`() = runTest {
-        viewModel.fetchPopularMovies()
-
-        viewModel.moviesState.test {
-            when (val result = awaitItem()) {
-                is Resource.Loading -> {
-                    advanceUntilIdle()
-                    awaitItem()
-                }
-                is Resource.Success -> {
-                    assertTrue(result.data.isNotEmpty(), "Movie list should not be empty")
-                }
-                is Resource.Error -> {
-                    fail("Expected a successful movie list, but got an error")
-                }
-                else -> fail("Unexpected state: $result")
-            }
-            expectNoEvents()
-        }
-    }
-
-    @Test
-    fun `fetchPopularMovies should handle success with mock data`() = runTest {
-        val movieRepository = mock<MovieRepository>()
-        val mockMoviesList = List(20) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
-
-        everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
-
+    private fun setupKoin() {
         stopKoin()
         startKoin {
             modules(
                 module {
                     single { movieRepository }
-                    factory { GetPopularMoviesUseCase(get()) }
-                    single { MovieViewModel(get()) }
+                    factory { getPopularMoviesUseCase }
+                    single { viewModel }
                 }
             )
         }
-        val viewModel = MovieViewModel(GetPopularMoviesUseCase(movieRepository))
+    }
 
+    @Test
+    fun `fetchPopularMovies should handle success with mock data`() = runTest {
+        val mockMoviesList = List(20) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
+        everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
+
+        setupKoin()
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
@@ -104,8 +62,7 @@ class MovieViewModelTest : KoinTest {
                     awaitItem()
                 }
                 is Resource.Success -> {
-                    assertTrue(result.data.isNotEmpty(), "Movie list should not be empty")
-                    assertEquals(mockMoviesList.size, result.data.size, "Movie list size should match the mock list")
+                    assertEquals(mockMoviesList.size, result.data.size, "Movie list size should match")
                     assertTrue(result.data.containsAll(mockMoviesList), "Movie list should contain all expected movies")
                 }
                 else -> fail("Expected success, but got: $result")
@@ -117,24 +74,9 @@ class MovieViewModelTest : KoinTest {
 
     @Test
     fun `fetchPopularMovies should handle an exception correctly`() = runTest {
-        val movieRepository = mock<MovieRepository>()
+        everySuspend { movieRepository.getPopularMovies() } returns flow { emit(Resource.Error(Exception("Error"))) }
 
-        everySuspend { movieRepository.getPopularMovies() } returns flow {
-            emit(Resource.Error(Exception("Error")))
-        }
-
-        stopKoin()
-        startKoin {
-            modules(
-                module {
-                    single { movieRepository }
-                    factory { GetPopularMoviesUseCase(get()) }
-                    single { MovieViewModel(get()) }
-                }
-            )
-        }
-        val viewModel = MovieViewModel(GetPopularMoviesUseCase(movieRepository))
-
+        setupKoin()
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
@@ -146,12 +88,11 @@ class MovieViewModelTest : KoinTest {
                 is Resource.Error -> {
                     assertTrue(result.exception.message!!.contains("Error"), "Error message should be correct")
                 }
-                is Resource.Success -> {
-                    advanceUntilIdle()
-                }
                 else -> fail("Expected an error but got: $result")
             }
             expectNoEvents()
         }
     }
+
+
 }
