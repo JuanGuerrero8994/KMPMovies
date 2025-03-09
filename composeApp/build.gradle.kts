@@ -22,11 +22,9 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
-
     }
     
     listOf(
@@ -125,8 +123,6 @@ kotlin {
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
-
-
             }
         }
 
