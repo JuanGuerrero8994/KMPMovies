@@ -34,26 +34,25 @@ import kotlin.test.fail
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieViewModelTest : KoinTest {
 
-    private val movieRepository = mock<MovieRepository>()
-    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
+    private val movieRepository: MovieRepository = mock()  // Mock de MovieRepository
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
     private lateinit var viewModel: MovieViewModel
 
-    // Inicialización de Koin antes de cada prueba
+    // Inicializar Koin antes de cada prueba
     @BeforeTest
     fun setupKoin() {
-        // Detener cualquier Koin ya iniciado para evitar conflictos
-        stopKoin()
+        stopKoin()  // Detener cualquier Koin previamente inicializado
 
-        // Definir el módulo de Koin con las dependencias necesarias
-        val module: Module = module {
-            single { movieRepository }
+        // Definir el módulo de Koin para las pruebas
+        val testModule: Module = module {
+            single { movieRepository }  // Usar el mock
             factory { getPopularMoviesUseCase }
-            factory { MovieViewModel(getPopularMoviesUseCase) }
+            factory { MovieViewModel(getPopularMoviesUseCase) }  // ViewModel con las dependencias
         }
 
-        // Iniciar Koin con el módulo de pruebas
+        // Inicializar Koin con el módulo de prueba
         startKoin {
-            modules(module)
+            modules(testModule)
         }
 
         // Inicializar el ViewModel
@@ -63,36 +62,40 @@ class MovieViewModelTest : KoinTest {
     // Detener Koin después de cada prueba
     @AfterTest
     fun tearDown() {
-        stopKoin()  // Detener Koin después de cada prueba para limpiar el contexto
+        stopKoin()  // Limpiar Koin después de cada prueba
     }
 
     @Test
     fun `fetchPopularMovies should handle success with mock data`() = runTest {
         val mockMoviesList = List(10) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
+
+        // Simular la respuesta del repository
         everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
 
+        // Llamar a la función para obtener las películas
         viewModel.fetchPopularMovies()
 
+        // Verificar el estado de las películas
         viewModel.moviesState.test {
             when (val result = awaitItem()) {
                 is Resource.Loading -> {
                     advanceUntilIdle()
-                    awaitItem()
+                    awaitItem()  // Asegurarse de que la carga se complete
                 }
                 is Resource.Success -> {
-                    assertEquals(mockMoviesList.size, result.data.size, "Movie list size should match")
-                    assertTrue(result.data.containsAll(mockMoviesList), "Movie list should contain all expected movies")
+                    // Verificar que la lista de películas sea correcta
+                    assertEquals(mockMoviesList.size, result.data.size)
+                    assertTrue(result.data.containsAll(mockMoviesList))
                 }
-                else -> fail("Expected success, but got: $result")
+                else -> fail("Se esperaba éxito, pero obtuvo: $result")
             }
-            verifySuspend { movieRepository.getPopularMovies() }
             expectNoEvents()
         }
     }
 
     @Test
     fun `fetchPopularMovies should handle an exception correctly`() = runTest {
-        everySuspend { movieRepository.getPopularMovies() } returns flow { emit(Resource.Error(Exception("Error"))) }
+        everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Error(Exception("Error en la solicitud")))
 
         viewModel.fetchPopularMovies()
 
@@ -103,9 +106,9 @@ class MovieViewModelTest : KoinTest {
                     awaitItem()
                 }
                 is Resource.Error -> {
-                    assertTrue(result.exception.message!!.contains("Error"), "Error message should be correct")
+                    assertTrue(result.exception.message!!.contains("Error en la solicitud"))
                 }
-                else -> fail("Expected an error but got: $result")
+                else -> fail("Se esperaba un error, pero obtuvo: $result")
             }
             expectNoEvents()
         }
