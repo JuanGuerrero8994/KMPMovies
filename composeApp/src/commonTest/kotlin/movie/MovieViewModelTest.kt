@@ -19,8 +19,9 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatform.stopKoin
 import org.koin.test.KoinTest
-import org.koin.test.inject
+import org.koin.test.get
 import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,10 +32,11 @@ class MovieViewModelTest : KoinTest {
 
     private val movieRepository = mock<MovieRepository>()
     private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
-    private val viewModel: MovieViewModel by inject()
+    private lateinit var viewModel: MovieViewModel
 
-    // Solo inicia Koin una vez al principio
-    private fun setupKoin() {
+    // Setup Koin only once before all tests
+    @BeforeTest
+    fun setupKoin() {
         startKoin {
             modules(
                 module {
@@ -46,10 +48,10 @@ class MovieViewModelTest : KoinTest {
         }
     }
 
-    // Detener Koin después de cada prueba
+    // Stop Koin after each test
     @AfterTest
     fun tearDown() {
-        stopKoin() // Detener Koin al final de la prueba
+        stopKoin()
     }
 
     @Test
@@ -57,7 +59,9 @@ class MovieViewModelTest : KoinTest {
         val mockMoviesList = List(10) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
         everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
 
-        setupKoin() // Inicia Koin
+        // Lazy initialize viewModel after Koin setup
+        viewModel = get()
+
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
@@ -81,7 +85,9 @@ class MovieViewModelTest : KoinTest {
     fun `fetchPopularMovies should handle an exception correctly`() = runTest {
         everySuspend { movieRepository.getPopularMovies() } returns flow { emit(Resource.Error(Exception("Error"))) }
 
-        setupKoin() // Inicia Koin
+        // Lazy initialize viewModel after Koin setup
+        viewModel = get()
+
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
