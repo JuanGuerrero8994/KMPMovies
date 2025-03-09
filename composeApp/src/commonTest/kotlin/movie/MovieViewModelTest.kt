@@ -16,9 +16,11 @@ import org.devjg.kmpmovies.domain.repository.MovieRepository
 import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
 import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatform.stopKoin
 import org.koin.test.KoinTest
+import org.koin.test.inject
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -29,27 +31,33 @@ class MovieViewModelTest : KoinTest {
 
     private val movieRepository = mock<MovieRepository>()
     private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
-    private val viewModel = MovieViewModel(getPopularMoviesUseCase)
+    private val viewModel: MovieViewModel by inject()
 
+    // Solo inicia Koin una vez al principio
     private fun setupKoin() {
-        stopKoin()
         startKoin {
             modules(
                 module {
                     single { movieRepository }
                     factory { getPopularMoviesUseCase }
-                    single { viewModel }
+                    factory { MovieViewModel(getPopularMoviesUseCase) }
                 }
             )
         }
     }
 
+    // Detener Koin después de cada prueba
+    @AfterTest
+    fun tearDown() {
+        stopKoin() // Detener Koin al final de la prueba
+    }
+
     @Test
     fun `fetchPopularMovies should handle success with mock data`() = runTest {
-        val mockMoviesList = List(20) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
+        val mockMoviesList = List(10) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
         everySuspend { movieRepository.getPopularMovies() } returns flowOf(Resource.Success(mockMoviesList))
 
-        setupKoin()
+        setupKoin() // Inicia Koin
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
@@ -73,7 +81,7 @@ class MovieViewModelTest : KoinTest {
     fun `fetchPopularMovies should handle an exception correctly`() = runTest {
         everySuspend { movieRepository.getPopularMovies() } returns flow { emit(Resource.Error(Exception("Error"))) }
 
-        setupKoin()
+        setupKoin() // Inicia Koin
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
@@ -90,6 +98,4 @@ class MovieViewModelTest : KoinTest {
             expectNoEvents()
         }
     }
-
-
 }
