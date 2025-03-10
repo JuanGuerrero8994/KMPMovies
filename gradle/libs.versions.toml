@@ -96,13 +96,12 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 #TEST
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version = "kotlinx-coroutines-test" }
 koinTest = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koinTestJunit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 androidx-compose-uiTest = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-test" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 

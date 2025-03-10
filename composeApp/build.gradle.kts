@@ -123,6 +123,7 @@ kotlin {
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
+                implementation(libs.koinTestJunit4)
             }
         }
 

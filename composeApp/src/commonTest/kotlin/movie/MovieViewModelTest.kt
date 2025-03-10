@@ -4,10 +4,13 @@ import app.cash.turbine.test
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.repository.MovieRepository
@@ -15,7 +18,6 @@ import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
@@ -24,76 +26,57 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieViewModelTest : KoinTest {
 
-    private val movieRepository: MovieRepository = mock()  // Mock de MovieRepository
-    private val getPopularMoviesUseCase: GetPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
+    private val testDispatcher = StandardTestDispatcher()
+    private val movieRepository: MovieRepository = mock()
+    private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
     private lateinit var viewModel: MovieViewModel
 
-    // Inicializar Koin antes de cada prueba
     @BeforeTest
-    fun setupKoin() {
-        stopKoin()  // Detener cualquier Koin previamente inicializado
+    fun setup() {
+        Dispatchers.setMain(testDispatcher) // Cambiar el Dispatcher principal a testDispatcher
 
-        // Definir el módulo de Koin para las pruebas
-        val testModule: Module = module {
-            single { movieRepository }  // Usar el mock
+        val testModule = module {
+            single { movieRepository }
             factory { getPopularMoviesUseCase }
-            factory { MovieViewModel(getPopularMoviesUseCase) }  // ViewModel con las dependencias
+            factory { MovieViewModel(getPopularMoviesUseCase) }
         }
 
-        // Inicializar Koin con el módulo de prueba
-        startKoin {
-            modules(testModule)
-        }
+        startKoin { modules(testModule) }
 
-        // Inicializar el ViewModel
         viewModel = get()
     }
 
-    // Detener Koin después de cada prueba
     @AfterTest
     fun tearDown() {
-        stopKoin()  // Limpiar Koin después de cada prueba
+        Dispatchers.resetMain() // Restaurar Dispatcher principal
+        stopKoin() // Detener Koin
     }
 
     @Test
-    fun `fetchPopularMovies should handle success with mock data`() =  runTest(UnconfinedTestDispatcher()){
+    fun `fetchPopularMovies should handle success with mock data`() = runTest {
         val mockMoviesList = List(10) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
 
-        // Simular la respuesta del repository
         everySuspend { movieRepository.getPopularMovies() } returns flow {
             emit(Resource.Success(mockMoviesList))
         }
 
-        // Llamar a la función para obtener las películas
         viewModel.fetchPopularMovies()
 
-        // Verificar el estado de las películas
         viewModel.moviesState.test {
-            // Verificar que se emita un estado de Loading primero
-            val loadingState = awaitItem()
-            println("Evento recibido: $loadingState")
-
-            assertTrue(loadingState is Resource.Loading)
-
-            // Luego verificar que se emita un estado de Success
+            assertTrue(awaitItem() is Resource.Loading)
             val result = awaitItem()
-            println("Evento recibido: $result")
-
             assertTrue(result is Resource.Success)
-            assertEquals(mockMoviesList.size, (result).data.size)
-            assertTrue(result.data.containsAll(mockMoviesList))
-
-            // Asegurarse de que no haya eventos pendientes
+            assertEquals(mockMoviesList, (result as Resource.Success).data)
             expectNoEvents()
         }
     }
 
     @Test
-    fun `fetchPopularMovies should handle an exception correctly`() = runTest(UnconfinedTestDispatcher()) {
-        // Simular la respuesta del repository con un error
+    fun `fetchPopularMovies should handle an exception correctly`() = runTest {
         everySuspend { movieRepository.getPopularMovies() } returns flow {
             emit(Resource.Loading)
             emit(Resource.Error(Exception("Error en la solicitud")))
@@ -102,20 +85,10 @@ class MovieViewModelTest : KoinTest {
         viewModel.fetchPopularMovies()
 
         viewModel.moviesState.test {
-            // Verificar que se emita un estado de Loading primero
-            val loadingState = awaitItem()
-            println("Evento recibido: $loadingState")
-
-            assertTrue(loadingState is Resource.Loading)
-
-            // Luego verificar que se emita un estado de Error
+            assertTrue(awaitItem() is Resource.Loading)
             val result = awaitItem()
-            println("Evento recibido: $result")
-
             assertTrue(result is Resource.Error)
-            assertTrue((result as Resource.Error).exception.message!!.contains("Error en la solicitud"))
-
-            // Asegurarse de que no haya eventos pendientes
+            assertTrue(result.exception.message!!.contains("Error en la solicitud"))
             expectNoEvents()
         }
     }
