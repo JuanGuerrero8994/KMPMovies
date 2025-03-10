@@ -6,4 +6,5 @@ import org.devjg.kmpmovies.domain.model.Movie
 
 interface MovieRepository {
     suspend fun getPopularMovies(): Flow<Resource<List<Movie>>>
+    suspend fun getTopRatedMovies():Flow<Resource<List<Movie>>>
 }

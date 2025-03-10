@@ -7,7 +7,5 @@ import org.devjg.kmpmovies.ui.components.scaffold.ScaffoldComponent
 
 @Composable
 fun FavouriteScreen(navController: NavController){
-    ScaffoldComponent(navController){
         Text("Favourite")
-    }
 }

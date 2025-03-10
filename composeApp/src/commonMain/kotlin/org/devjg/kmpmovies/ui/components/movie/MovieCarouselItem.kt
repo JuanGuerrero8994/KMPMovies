@@ -1,4 +1,4 @@
-package org.devjg.kmpmovies.ui.movie
+package org.devjg.kmpmovies.ui.components.movie
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +20,11 @@ fun MovieCarouselItem(movie: Movie) {
         modifier = Modifier
             .padding(8.dp)
             .size(width = 250.dp, height = 350.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = 8.dp
     ) {
-        val imagePainter: Painter = rememberAsyncImagePainter(model = movie.posterUrl)
         Image(
-            painter = imagePainter,
+            painter = rememberAsyncImagePainter(model = movie.posterUrl),
             contentDescription = "Movie Poster",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
