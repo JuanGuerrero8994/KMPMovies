@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Movie
@@ -22,7 +24,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class MovieViewModelTest : KoinTest {
 
     private val movieRepository: MovieRepository = mock()  // Mock de MovieRepository
@@ -57,12 +59,11 @@ class MovieViewModelTest : KoinTest {
     }
 
     @Test
-    fun `fetchPopularMovies should handle success with mock data`() = runTest {
+    fun `fetchPopularMovies should handle success with mock data`() =  runTest(UnconfinedTestDispatcher()){
         val mockMoviesList = List(10) { index -> Movie(id = index + 1, title = "Movie ${index + 1}") }
 
         // Simular la respuesta del repository
         everySuspend { movieRepository.getPopularMovies() } returns flow {
-            emit(Resource.Loading)
             emit(Resource.Success(mockMoviesList))
         }
 
@@ -73,12 +74,16 @@ class MovieViewModelTest : KoinTest {
         viewModel.moviesState.test {
             // Verificar que se emita un estado de Loading primero
             val loadingState = awaitItem()
+            println("Evento recibido: $loadingState")
+
             assertTrue(loadingState is Resource.Loading)
 
             // Luego verificar que se emita un estado de Success
             val result = awaitItem()
+            println("Evento recibido: $result")
+
             assertTrue(result is Resource.Success)
-            assertEquals(mockMoviesList.size, (result as Resource.Success).data.size)
+            assertEquals(mockMoviesList.size, (result).data.size)
             assertTrue(result.data.containsAll(mockMoviesList))
 
             // Asegurarse de que no haya eventos pendientes
@@ -87,7 +92,7 @@ class MovieViewModelTest : KoinTest {
     }
 
     @Test
-    fun `fetchPopularMovies should handle an exception correctly`() = runTest {
+    fun `fetchPopularMovies should handle an exception correctly`() = runTest(UnconfinedTestDispatcher()) {
         // Simular la respuesta del repository con un error
         everySuspend { movieRepository.getPopularMovies() } returns flow {
             emit(Resource.Loading)
@@ -99,10 +104,14 @@ class MovieViewModelTest : KoinTest {
         viewModel.moviesState.test {
             // Verificar que se emita un estado de Loading primero
             val loadingState = awaitItem()
+            println("Evento recibido: $loadingState")
+
             assertTrue(loadingState is Resource.Loading)
 
             // Luego verificar que se emita un estado de Error
             val result = awaitItem()
+            println("Evento recibido: $result")
+
             assertTrue(result is Resource.Error)
             assertTrue((result as Resource.Error).exception.message!!.contains("Error en la solicitud"))
 
