@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import org.devjg.kmpmovies.ui.screen.movie.MovieScreen
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
+import org.devjg.kmpmovies.ui.screen.tvShowTopRated.TVShowViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -11,9 +12,10 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: MovieViewModel = koinViewModel()
+    movieViewModel: MovieViewModel = koinViewModel(),
+    tvShowViewModel: TVShowViewModel = koinViewModel()
 ) {
-    MovieScreen(viewModel,navController)
+    MovieScreen(movieViewModel,tvShowViewModel,navController)
 }
 
 

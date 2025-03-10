@@ -1,6 +1,6 @@
 package org.devjg.kmpmovies.data.mapper
 
-import org.devjg.kmpmovies.data.model.response.MovieResponse
+import org.devjg.kmpmovies.data.model.response.movie.MovieResponse
 import org.devjg.kmpmovies.domain.model.Movie
 
 object MovieMapper {
