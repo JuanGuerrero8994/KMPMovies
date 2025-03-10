@@ -13,7 +13,8 @@ object MovieMapper {
             releaseDate = movieResponse.releaseDate,
             voteAverage = movieResponse.voteAverage,
             voteCount = movieResponse.voteCount,
-            popularity = movieResponse.popularity
+            popularity = movieResponse.popularity,
+            adult = movieResponse.adult
         )
     }
 
