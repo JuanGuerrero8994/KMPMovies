@@ -3,6 +3,7 @@ package org.devjg.kmpmovies.ui.components.movie
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.ui.zIndex
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeSource
+import org.devjg.kmpmovies.ui.navigation.Destinations
 
 
 @Composable
@@ -58,7 +60,7 @@ fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .haze(state = hazeState) // Aplica desenfoque en el fondo
+                    .hazeSource(state = hazeState) // Aplica desenfoque en el fondo
                     .zIndex(-1f) // 🔹 Fondo detrás del carrusel
             ) {
                 Image(
@@ -86,7 +88,7 @@ fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
         ) {
             itemsIndexed(movies) { index, movie ->
                 if (index == currentIndex) {
-                    DarkMovieCarouselItem(movie)
+                    MovieCarouselItem(movie,navController)
                 }
             }
         }
@@ -94,12 +96,18 @@ fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
 }
 
 @Composable
-fun DarkMovieCarouselItem(movie: Movie) {
+fun MovieCarouselItem(movie: Movie,navController: NavController) {
     Card(
         shape = RoundedCornerShape(12.dp),
         backgroundColor = Color.DarkGray.copy(alpha = 0.8f),
         elevation = 8.dp,
         modifier = Modifier.padding(8.dp)
+            .clickable {
+                navController.navigate(Destinations.MovieDetailScreen.createRoute(movie.id)) {
+                    popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true } // Evita duplicaciones
+                    launchSingleTop = true // Evita múltiples instancias
+                }
+        }
     ) {
         Image(
             painter = rememberAsyncImagePainter(movie.posterUrl),

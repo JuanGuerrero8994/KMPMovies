@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.devjg.kmpmovies.domain.model.Movie
+import org.devjg.kmpmovies.ui.navigation.Destinations
 
 @Composable
 fun MovieCard(movie: Movie , navController: NavController) {
@@ -29,7 +30,12 @@ fun MovieCard(movie: Movie , navController: NavController) {
         modifier = Modifier
             .width(150.dp)
             .height(220.dp)
-            .clickable { },
+            .clickable {
+                navController.navigate(Destinations.MovieDetailScreen.createRoute(movie.id)){
+                    popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true } // Evita duplicaciones
+                    launchSingleTop = true // Evita múltiples instancias
+                }
+            },
         shape = RoundedCornerShape(8.dp),
         elevation = 4.dp
     ) {

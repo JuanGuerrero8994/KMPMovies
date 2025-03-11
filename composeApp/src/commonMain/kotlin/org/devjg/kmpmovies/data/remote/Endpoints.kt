@@ -11,4 +11,6 @@ object Endpoints {
 
     const val TOP_RATED_TV_SHOW ="tv/top_rated"
 
+    const val MOVIE_DETAIL = "/movie/{movie_id}"
+
 }

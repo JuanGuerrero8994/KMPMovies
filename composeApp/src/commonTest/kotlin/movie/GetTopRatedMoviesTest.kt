@@ -14,6 +14,7 @@ import kotlinx.coroutines.test.setMain
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.repository.MovieRepository
+import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
 import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
 import org.devjg.kmpmovies.domain.usecases.GetTopRatedMoviesUseCase
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -35,7 +36,7 @@ class GetTopRatedMoviesTest : KoinTest {
     private val movieRepository: MovieRepository = mock()
     private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
     private val getTopRatedMoviesUseCase = GetTopRatedMoviesUseCase(movieRepository)
-
+    private val getDetailMovieUseCase = GetDetailMovieUseCase(movieRepository)
     private lateinit var viewModel: MovieViewModel
 
     @BeforeTest
@@ -46,7 +47,7 @@ class GetTopRatedMoviesTest : KoinTest {
             single { movieRepository }
             factory { getPopularMoviesUseCase }
             factory { getTopRatedMoviesUseCase }
-            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase) }
+            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase,getDetailMovieUseCase) }
         }
 
         startKoin { modules(testModule) }

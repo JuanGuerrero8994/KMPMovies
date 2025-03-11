@@ -31,7 +31,7 @@ fun MovieScreen(
     LaunchedEffect(Unit) {
         movieViewModel.fetchPopularMovies()
         movieViewModel.fetchTopRatedMovies()
-        tvShowViewModel.fetchTVShowTopRated() // Asegúrate de que este método esté en tvShowViewModel
+        tvShowViewModel.fetchTVShowTopRated()
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
