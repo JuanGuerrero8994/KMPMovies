@@ -13,6 +13,7 @@ androidx-lifecycle = "2.8.4"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.7.0"
+haze = "1.5.0"
 junit = "4.13.2"
 kotlin = "2.1.0"
 kotlinGradlePlugin = "2.0.21"
@@ -48,11 +49,14 @@ turbine = "1.0.0"
 foundationAndroid = "1.7.8"
 
 
+#Blur
+cloudy = "0.2.6"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerIndicators" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -103,6 +107,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 androidx-compose-uiTest = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-test" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+compose-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 
 
 

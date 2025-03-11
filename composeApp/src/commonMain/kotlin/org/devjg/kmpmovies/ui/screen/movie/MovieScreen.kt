@@ -1,6 +1,5 @@
 package org.devjg.kmpmovies.ui.screen.movie
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,16 +14,24 @@ import androidx.navigation.NavController
 import org.devjg.kmpmovies.ui.base.ResourceStateHandler
 import org.devjg.kmpmovies.ui.components.movie.MovieCarouselView
 import org.devjg.kmpmovies.ui.screen.topRatedMovies.TopRatedMoviesView
+import org.devjg.kmpmovies.ui.screen.tvShowTopRated.TVShowTopRatedView
+import org.devjg.kmpmovies.ui.screen.tvShowTopRated.TVShowViewModel
 
 
 @Composable
-fun MovieScreen(viewModel: MovieViewModel, navController: NavController) {
-    val movieState by viewModel.moviesState.collectAsState()
-    val topRatedState by viewModel.topRatedMoviesState.collectAsState()
+fun MovieScreen(
+    movieViewModel: MovieViewModel,
+    tvShowViewModel: TVShowViewModel,
+    navController: NavController
+) {
+    val movieState by movieViewModel.moviesState.collectAsState()
+    val topRatedState by movieViewModel.topRatedMoviesState.collectAsState()
+    val tvShowTopRatedState by tvShowViewModel.tvShowsState.collectAsState() // Aquí se usa tvShowViewModel
 
     LaunchedEffect(Unit) {
-        viewModel.fetchPopularMovies()
-        viewModel.fetchTopRatedMovies()
+        movieViewModel.fetchPopularMovies()
+        movieViewModel.fetchTopRatedMovies()
+        tvShowViewModel.fetchTVShowTopRated() // Asegúrate de que este método esté en tvShowViewModel
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -50,9 +57,18 @@ fun MovieScreen(viewModel: MovieViewModel, navController: NavController) {
                 }
             )
         }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        item {
+            ResourceStateHandler(
+                resource = tvShowTopRatedState,
+                successContent = { tvShow ->
+                    TVShowTopRatedView(tvShow = tvShow ,navController)
+                }
+            )
+        }
+
     }
 
 }
-
-
-

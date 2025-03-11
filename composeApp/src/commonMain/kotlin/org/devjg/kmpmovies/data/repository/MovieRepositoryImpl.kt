@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.data.mapper.MovieMapper
-import org.devjg.kmpmovies.data.model.response.PopularMoviesResponse
-import org.devjg.kmpmovies.data.model.response.TopRatedMoviesResponse
+import org.devjg.kmpmovies.data.model.response.movie.PopularMoviesResponse
+import org.devjg.kmpmovies.data.model.response.movie.TopRatedMoviesResponse
 import org.devjg.kmpmovies.data.remote.Endpoints
 import org.devjg.kmpmovies.data.remote.TMDBApi
 import org.devjg.kmpmovies.data.remote.buildUrl

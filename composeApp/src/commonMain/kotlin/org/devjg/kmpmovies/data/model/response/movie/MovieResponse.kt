@@ -1,4 +1,4 @@
-package org.devjg.kmpmovies.data.model.response
+package org.devjg.kmpmovies.data.model.response.movie
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
