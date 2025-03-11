@@ -110,6 +110,10 @@ kotlin {
             //NAPIER LOGS
             implementation(libs.napier)
 
+            //HAZE
+            implementation(libs.haze)
+
+
             // Exclude the logback dependencies to avoid duplicate META-INF files
             configurations.all {
                 exclude(group = "ch.qos.logback", module = "logback-classic")
@@ -123,7 +127,6 @@ kotlin {
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
-                implementation(libs.koinTestJunit4)
             }
         }
 

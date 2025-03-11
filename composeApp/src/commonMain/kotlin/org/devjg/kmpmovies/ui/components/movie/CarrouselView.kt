@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,15 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import org.devjg.kmpmovies.domain.model.Movie
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 
 
 @Composable
 fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
+    val hazeState = remember { HazeState() }
     var currentIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(movies) {
@@ -39,42 +48,65 @@ fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        // Fondo de la imagen
+        // 🔹 Fondo desenfocado con overlay oscuro
         if (movies.isNotEmpty()) {
-            Image(
-                painter = rememberAsyncImagePainter(model = movies[currentIndex].posterUrl),
-                contentDescription = "Blurred Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            val imagePainter: Painter = rememberAsyncImagePainter(model = movies[currentIndex].posterUrl)
 
-            // 🔥 Capa de oscurecimiento en la imagen para simular blur
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)) // Ajusta la transparencia para el efecto
-            )
+                    .haze(state = hazeState) // Aplica desenfoque en el fondo
+                    .zIndex(-1f) // 🔹 Fondo detrás del carrusel
+            ) {
+                Image(
+                    painter = imagePainter,
+                    contentDescription = "Blurred Background",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .hazeSource(hazeState) // 🔹 Fuente del desenfoque
+                )
+
+                // 🔥 Overlay oscuro para mejorar visibilidad en Dark Theme
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)) // Oscurece el fondo
+                )
+            }
         }
 
-        // Contenido en primer plano
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 16.dp),
-            contentAlignment = Alignment.BottomCenter
+        // 🔹 Carrusel de películas con tarjetas ajustadas a Dark Theme
+        LazyRow(
+            modifier = Modifier.wrapContentWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
-            LazyRow(
-                modifier = Modifier.wrapContentWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                itemsIndexed(movies) { index, movie ->
-                    if (index == currentIndex) {
-                        MovieCarouselItem(movie)
-                    }
+            itemsIndexed(movies) { index, movie ->
+                if (index == currentIndex) {
+                    DarkMovieCarouselItem(movie)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DarkMovieCarouselItem(movie: Movie) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        backgroundColor = Color.DarkGray.copy(alpha = 0.8f),
+        elevation = 8.dp,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(movie.posterUrl),
+            contentDescription = movie.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(180.dp, 270.dp)
+        )
     }
 }
