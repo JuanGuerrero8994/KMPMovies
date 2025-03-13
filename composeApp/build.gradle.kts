@@ -138,6 +138,8 @@ kotlin {
             implementation(libs.haze)
 
 
+            //SHIMMER
+            implementation(libs.compose.shimmer)
 
 
             // Exclude the logback dependencies to avoid duplicate META-INF files

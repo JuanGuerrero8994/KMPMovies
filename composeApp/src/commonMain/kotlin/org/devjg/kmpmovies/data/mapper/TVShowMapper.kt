@@ -11,7 +11,7 @@ object TVShowMapper {
             title = tvShowResponse.title, // El título puede estar en 'name' para TV Shows
             overview = tvShowResponse.overview,
             posterUrl = "https://image.tmdb.org/t/p/w500${tvShowResponse.posterPath}",
-            releaseDate = tvShowResponse.firstAirDate, // 'firstAirDate' para TV Shows
+            releaseDate = tvShowResponse.firstAirDate,
             voteAverage = tvShowResponse.voteAverage,
             voteCount = tvShowResponse.voteCount,
             popularity = tvShowResponse.popularity,

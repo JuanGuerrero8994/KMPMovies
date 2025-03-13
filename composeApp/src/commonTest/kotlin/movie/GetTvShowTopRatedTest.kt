@@ -38,7 +38,7 @@ class GetTvShowTopRatedTest : KoinTest {
 
     @BeforeTest
     fun setup() {
-        Dispatchers.setMain(testDispatcher) // Cambiar el Dispatcher principal a testDispatcher
+        Dispatchers.setMain(testDispatcher)
 
         val testModule = module {
             single { tvShowRepository }

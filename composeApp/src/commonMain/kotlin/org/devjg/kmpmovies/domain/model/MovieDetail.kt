@@ -1,27 +1,28 @@
 package org.devjg.kmpmovies.domain.model
 
 
+
 data class MovieDetail(
-    val id: Int,
-    val title: String,
-    val overview: String?,
-    val posterUrl: String?,
-    val backdropUrl: String?,
-    val releaseDate: String?,
-    val voteAverage: Double?,
-    val voteCount: Int?,
-    val popularity: Double?,
-    val adult: Boolean?,
-    val collection: Collection?,
-    val budget: Int?,
-    val revenue: Int?,
-    val runtime: Int?
+    val id: Int = 0,
+    val title: String? = null,
+    val overview: String? = null,
+    val posterUrl: String? = null,
+    val backdropUrl: String? = null,
+    val releaseDate: String? = null,
+    val voteAverage: Double? = null,
+    val voteCount: Int? = null,
+    val popularity: Double? = null,
+    val adult: Boolean? = null,
+    val collection: Collection? = null,
+    val budget: Int? = null,
+    val revenue: Int? = null,
+    val runtime: Int? = null
 ) {
-    // Clase anidada para la colección a la que pertenece la película
+    
     data class Collection(
-        val id: Int,
-        val name: String,
-        val posterPath: String?,
-        val backdropPath: String?
+        val id: Int = 0,
+        val name: String? = null,
+        val posterPath: String? = null,
+        val backdropPath: String? = null
     )
 }

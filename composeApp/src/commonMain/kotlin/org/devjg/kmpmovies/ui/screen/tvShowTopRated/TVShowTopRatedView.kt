@@ -24,7 +24,7 @@ import org.devjg.kmpmovies.ui.components.tvShow.TVShowCard
 
 @Composable
 fun TVShowTopRatedView(tvShow: List<TVShow>, navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize()) { // Asegurar que ocupa el espacio necesario
+    Column(modifier = Modifier.fillMaxWidth()) { 
         Text(
             text = "TV Show Top Rated",
             style = MaterialTheme.typography.h6,
@@ -36,7 +36,7 @@ fun TVShowTopRatedView(tvShow: List<TVShow>, navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow(
-            modifier = Modifier.fillMaxWidth(), // Se asegura de ocupar el ancho disponible
+            modifier = Modifier.fillMaxWidth(), 
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {

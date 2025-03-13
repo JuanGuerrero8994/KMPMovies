@@ -37,7 +37,7 @@ fun NavGraph(navController: NavHostController) {
                     navArgument("movieId") { type = NavType.IntType }
                 )
             ) { _, backStackEntry ->
-                // Obtener el objeto MovieDetail desde los argumentos
+
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
                 MovieDetailScreen(movieId = movieId,movieViewModel, navController = navController)
             }

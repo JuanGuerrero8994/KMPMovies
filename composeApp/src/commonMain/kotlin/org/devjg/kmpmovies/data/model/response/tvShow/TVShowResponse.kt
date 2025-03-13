@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class TvShowResponse(
     val id: Int,
 
-    @SerialName("name") // Nombre de la propiedad en JSON
-    val title: String, // Usamos "title" en el modelo de dominio para mayor claridad
+    @SerialName("name")
+    val title: String,
 
     @SerialName("overview")
     val overview: String?,
@@ -17,7 +17,7 @@ data class TvShowResponse(
     val posterPath: String?,
 
     @SerialName("first_air_date")
-    val firstAirDate: String, // Fecha de emisión del show
+    val firstAirDate: String,
 
     @SerialName("vote_average")
     val voteAverage: Double,

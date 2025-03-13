@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.devjg.kmpmovies.domain.model.Movie
-import org.devjg.kmpmovies.ui.base.RatingStars
 import org.devjg.kmpmovies.ui.navigation.Destinations
 
 @Composable
@@ -30,7 +29,7 @@ fun MovieSimilarCard(movie: Movie, navController: NavController) {
             .height(250.dp)
             .clickable {
                 navController.navigate(Destinations.MovieDetailScreen.createRoute(movie.id)){
-                    popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true } // Evita duplicaciones
+                    popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true }
                     launchSingleTop = true
                 }
             },
@@ -48,8 +47,6 @@ fun MovieSimilarCard(movie: Movie, navController: NavController) {
             Spacer(modifier = Modifier.padding(8.dp))
 
             Text(movie.title, color = Color.White, fontSize = 15.sp)
-
-            RatingStars(movie.voteAverage ?: 0.0)
         }
     }
 }

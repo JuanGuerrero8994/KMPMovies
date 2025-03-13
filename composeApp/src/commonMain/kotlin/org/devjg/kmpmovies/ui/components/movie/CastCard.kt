@@ -41,32 +41,32 @@ fun CastCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(8.dp)
     ) {
-        // Card para la imagen del actor
+
         Card(
             shape = CircleShape,
             elevation = 4.dp,
             modifier = Modifier.padding(4.dp)
         ) {
-            // Imagen del actor dentro de un círculo
+
             AsyncImage(
                 model = cast.profilePath,
                 contentDescription = cast.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(100.dp)  // Tamaño pequeño del círculo
-                    .clip(CircleShape) // Hacemos la imagen circular
-                    .border(2.dp, Color.Gray, CircleShape) // Borde opcional alrededor de la imagen
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, Color.Gray, CircleShape)
             )
         }
 
-        // Espacio entre la imagen y el nombre
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Nombre del actor debajo de la Card
+
         Text(
             text = cast.name,
             color = Color.White,
-            fontSize = 14.sp, // Tamaño de fuente más pequeño
+            fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
     }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,17 +29,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
 import org.devjg.kmpmovies.domain.model.Cast
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
+import org.devjg.kmpmovies.ui.base.RatingStars
 
 @Composable
-fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cast>, navController: NavController) {
+fun MovieDetailView(
+    movie: MovieDetail,
+    movieSimilar: List<Movie>,
+    cast: List<Cast>,
+    navController: NavController
+) {
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
             IconButton(
@@ -56,12 +63,10 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
         item {
             Row {
                 Image(
-                    painter = rememberAsyncImagePainter(model = movie.backdropUrl),
+                    painter = rememberAsyncImagePainter(model = movie.backdropUrl ?: movie.posterUrl),
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(500.dp).align(Alignment.CenterVertically)
-
+                    modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f)
                 )
             }
         }
@@ -70,7 +75,7 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
 
         item {
             Text(
-                text = movie.title,
+                text = movie.title ?:"",
                 style = MaterialTheme.typography.h5,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -78,8 +83,15 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Release Date: ${movie.releaseDate}", color = Color.White)
-            Text(text = "Vote Average: ${movie.voteAverage}", color = Color.White)
+            Text(text = "Release Date: ${movie.releaseDate}", color = Color.White,fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row {
+                Text("Vote Average:" , color = Color.White, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.padding(2.dp))
+                RatingStars(movie.voteAverage ?: 0.0)
+            }
 
             var expanded by remember { mutableStateOf(false) }
 
@@ -92,6 +104,7 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
                     },
                     color = Color.White,
                     style = MaterialTheme.typography.body2,
+                    fontSize = 15.sp
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -106,23 +119,8 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
                     )
             }
 
-            Text(
-                text = "Budget: ${movie.budget?.let { "$${it}" } ?: "Not available"}",
-                color = Color.White,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-
-            Text(
-                text = "Revenue: ${movie.revenue?.let { "$${it}" } ?: "Not available"}",
-                color = Color.White,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Nueva sección para el elenco con LazyRow
             Text(
                 text = "Cast",
                 style = MaterialTheme.typography.h6,
@@ -132,21 +130,25 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // LazyRow para mostrar los actores
             LazyRow(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) // Espaciado entre los elementos
+                horizontalArrangement = Arrangement.spacedBy(8.dp) 
             ) {
                 items(cast) { cast ->
-                    CastCard(cast = cast) // Aquí pasas cada actor a la función CastCard
+                    CastCard(cast = cast) 
                 }
 
             }
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Similar Movies", fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth())
+            Text(
+                "Similar Movies",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                color=Color.White
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -154,13 +156,17 @@ fun MovieDetailView(movie: MovieDetail, movieSimilar:List<Movie>, cast: List<Cas
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) // Espaciado entre los elementos
+                horizontalArrangement = Arrangement.spacedBy(8.dp) 
             ) {
                 items(movieSimilar) { movie ->
-                    MovieSimilarCard(movie = movie,navController) // Aquí pasas cada actor a la función CastCard
+                    MovieSimilarCard(
+                        movie = movie,
+                        navController
+                    )
                 }
 
             }
         }
     }
 }
+

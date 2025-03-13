@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
+import org.devjg.kmpmovies.ui.base.LoadingType
 import org.devjg.kmpmovies.ui.base.ResourceStateHandler
 import org.devjg.kmpmovies.ui.components.movie.MovieDetailView
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -28,12 +29,15 @@ fun MovieDetailScreen(
 
     ResourceStateHandler(
         resource = movieDetailState,
+        loadingType = LoadingType.Detail,
         successContent = { movie ->
             ResourceStateHandler(
                 resource = movieCastState,
+                loadingType = LoadingType.Detail,
                 successContent = { cast ->
                     ResourceStateHandler(
                         resource = movieSimilarState,
+                        loadingType = LoadingType.Detail,
                         successContent = { similarMovies ->
                             MovieDetailView(
                                 movie = movie,

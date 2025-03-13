@@ -6,7 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Tema claro
+
 private val LightColors = lightColors(
     primary = Color(0xFF6200EE),
     primaryVariant = Color(0xFF3700B3),
@@ -19,7 +19,7 @@ private val LightColors = lightColors(
     onSurface = Color.Black
 )
 
-// Tema oscuro
+
 private val DarkColors = darkColors(
     primary = Color(0xFFBB86FC),
     primaryVariant = Color(0xFF3700B3),
@@ -34,7 +34,7 @@ private val DarkColors = darkColors(
 
 @Composable
 fun KmpMoviesTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(), // Detecta si el sistema usa modo oscuro
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) DarkColors else LightColors
