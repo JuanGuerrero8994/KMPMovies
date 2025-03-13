@@ -11,13 +11,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.devjg.kmpmovies.data.core.Resource
+import org.devjg.kmpmovies.ui.components.movie.ShimmerCard
+
+enum class LoadingType {
+    Carrousel,
+    Card,
+    Detail
+}
 
 @Composable
 fun <T> ResourceStateHandler(
     resource: Resource<T>,
-    loadingContent: @Composable () -> Unit = {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    loadingType: LoadingType,
+    loadingContent: @Composable (LoadingType) -> Unit = { type ->
+        when (type) {
+            LoadingType.Carrousel -> {
+
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            LoadingType.Card -> {
+
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    ShimmerCard()
+                }
+            }
+            LoadingType.Detail -> {
+
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     },
     errorContent: @Composable (Throwable) -> Unit = { exception ->
@@ -32,7 +57,7 @@ fun <T> ResourceStateHandler(
     successContent: @Composable (T) -> Unit
 ) {
     when (resource) {
-        is Resource.Loading -> loadingContent()
+        is Resource.Loading -> loadingContent(loadingType)
         is Resource.Success -> successContent(resource.data)
         is Resource.Error -> errorContent(resource.exception)
     }

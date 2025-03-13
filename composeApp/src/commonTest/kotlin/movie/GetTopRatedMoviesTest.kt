@@ -14,6 +14,9 @@ import kotlinx.coroutines.test.setMain
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.repository.MovieRepository
+import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
+import org.devjg.kmpmovies.domain.usecases.GetMovieCastUseCase
+import org.devjg.kmpmovies.domain.usecases.GetMovieSimilarUseCase
 import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
 import org.devjg.kmpmovies.domain.usecases.GetTopRatedMoviesUseCase
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -35,20 +38,25 @@ class GetTopRatedMoviesTest : KoinTest {
     private val movieRepository: MovieRepository = mock()
     private val getPopularMoviesUseCase = GetPopularMoviesUseCase(movieRepository)
     private val getTopRatedMoviesUseCase = GetTopRatedMoviesUseCase(movieRepository)
+    private val getDetailMovieUseCase = GetDetailMovieUseCase(movieRepository)
+    private val getMovieCastUseCase = GetMovieCastUseCase(movieRepository)
+    private val getMovieSimilarUseCase = GetMovieSimilarUseCase(movieRepository)
 
     private lateinit var viewModel: MovieViewModel
 
     @BeforeTest
     fun setup() {
-        Dispatchers.setMain(testDispatcher) // Cambiar el Dispatcher principal a testDispatcher
+        Dispatchers.setMain(testDispatcher) 
 
         val testModule = module {
             single { movieRepository }
             factory { getPopularMoviesUseCase }
             factory { getTopRatedMoviesUseCase }
-            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase) }
+            factory { getDetailMovieUseCase }
+            factory { getMovieCastUseCase }
+            factory { getMovieSimilarUseCase }
+            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase,getDetailMovieUseCase,getMovieCastUseCase,getMovieSimilarUseCase) }
         }
-
         startKoin { modules(testModule) }
 
         viewModel = get()

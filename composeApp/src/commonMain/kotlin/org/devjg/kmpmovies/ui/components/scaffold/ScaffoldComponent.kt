@@ -29,7 +29,7 @@ fun ScaffoldComponent(
         contentColor = Color.Transparent
     ) { innerPadding ->
 
-        // Colocamos el contenido del Scaffold
+
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),

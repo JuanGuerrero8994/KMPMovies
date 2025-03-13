@@ -8,12 +8,11 @@ import org.devjg.kmpmovies.ui.screen.tvShowTopRated.TVShowViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
-    movieViewModel: MovieViewModel = koinViewModel(),
-    tvShowViewModel: TVShowViewModel = koinViewModel()
+    movieViewModel: MovieViewModel,
+    tvShowViewModel: TVShowViewModel
 ) {
     MovieScreen(movieViewModel,tvShowViewModel,navController)
 }

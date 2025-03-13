@@ -23,7 +23,9 @@ import org.devjg.kmpmovies.ui.components.movie.MovieCard
 
 @Composable
 fun TopRatedMoviesView(movies: List<Movie>, navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize()) { // Asegurar que ocupa el espacio necesario
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
             text = "Top Rated Movies",
             style = MaterialTheme.typography.h6,
@@ -34,10 +36,11 @@ fun TopRatedMoviesView(movies: List<Movie>, navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+
         LazyRow(
-            modifier = Modifier.fillMaxWidth(), // Se asegura de ocupar el ancho disponible
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(movies) { movie ->
                 MovieCard(movie = movie, navController)

@@ -20,7 +20,6 @@ fun App() {
         ) {
             val navController = rememberNavController()
             NavGraph(navController = navController)
-
         }
     }
 }
