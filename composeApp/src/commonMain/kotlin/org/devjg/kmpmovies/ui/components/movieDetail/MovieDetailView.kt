@@ -35,6 +35,7 @@ import coil3.compose.rememberAsyncImagePainter
 import org.devjg.kmpmovies.domain.model.Cast
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
+import org.devjg.kmpmovies.domain.model.Person
 import org.devjg.kmpmovies.ui.base.RatingStars
 
 @Composable

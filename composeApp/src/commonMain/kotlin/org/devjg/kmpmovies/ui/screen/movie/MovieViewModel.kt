@@ -11,7 +11,7 @@ import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Cast
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
-import org.devjg.kmpmovies.domain.usecases.GetCastDetailUseCase
+import org.devjg.kmpmovies.domain.model.Person
 import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieCastUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieSimilarUseCase
@@ -24,7 +24,6 @@ class MovieViewModel(
     private val getDetailMovieUseCase: GetDetailMovieUseCase,
     private val getMovieCastUseCase: GetMovieCastUseCase,
     private val getMovieSimilarUseCase: GetMovieSimilarUseCase,
-    private val getCastDetailUseCase: GetCastDetailUseCase
 ) : ViewModel() {
 
     private val _moviesState = MutableStateFlow<Resource<List<Movie>>>(Resource.Loading)
@@ -42,8 +41,6 @@ class MovieViewModel(
     private val _moviesSimilarState = MutableStateFlow<Resource<List<Movie>>>(Resource.Loading)
     val moviesSimilarState: StateFlow<Resource<List<Movie>>> get() = _moviesSimilarState
 
-    private val _castState = MutableStateFlow<Resource<Cast>>(Resource.Loading)
-    val castState: StateFlow<Resource<Cast>> get() = _castState
 
     /**
      * Función genérica para evitar repetición en los fetch
@@ -61,5 +58,4 @@ class MovieViewModel(
     fun fetchMovieDetail(movieId: Int) = fetchData(_movieDetailState) { getDetailMovieUseCase.invoke(movieId) }
     fun fetchMovieCast(movieId: Int) = fetchData(_movieCastState) { getMovieCastUseCase.invoke(movieId) }
     fun fetchMovieSimilar(movieId: Int) = fetchData(_moviesSimilarState) { getMovieSimilarUseCase.invoke(movieId) }
-    fun fetchCast(movieId: Int) = fetchData(_castState) { getCastDetailUseCase.invoke(movieId) }
 }

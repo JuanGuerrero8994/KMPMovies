@@ -8,7 +8,7 @@ import androidx.navigation.navArgument
 import org.devjg.kmpmovies.ui.components.scaffold.BottomNavScreen
 import org.devjg.kmpmovies.ui.components.scaffold.ScaffoldComponent
 import org.devjg.kmpmovies.ui.screen.account.AccountScreen
-import org.devjg.kmpmovies.ui.screen.castDetail.CastDetailScreen
+import org.devjg.kmpmovies.ui.screen.personDetail.PersonDetailScreen
 import org.devjg.kmpmovies.ui.screen.favourite.FavouriteScreen
 import org.devjg.kmpmovies.ui.screen.home.HomeScreen
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -23,7 +23,7 @@ fun NavGraph(navController: NavHostController) {
     val movieViewModel: MovieViewModel = koinViewModel()
     val tvShowViewModel: TVShowViewModel = koinViewModel()
 
-    ScaffoldComponent(navController) {
+    ScaffoldComponent(navController, title = "Netflix") {
         NavHost(navController = navController, startDestination = Destinations.HomeScreen.route) {
             // Rutas simples
             addBottomNavRoute(navController, BottomNavScreen.Home.route) { HomeScreen(it,movieViewModel, tvShowViewModel) }
@@ -47,13 +47,15 @@ fun NavGraph(navController: NavHostController) {
                 navController = navController,
                 route = Destinations.CastDetailScreen.route,
                 arguments = listOf(
-                    navArgument("castId") { type = NavType.IntType }
+                    navArgument("movieId") { type = NavType.IntType },
+                    navArgument("personId") { type = NavType.IntType }
                 )
             ) { _, backStackEntry ->
 
-                val castId = backStackEntry.arguments?.getInt("castId") ?: 0
-                CastDetailScreen(
-                    castId = castId,
+                val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+
+                PersonDetailScreen(
+                    movieId = movieId,
                     navController = navController,
                     movieViewModel = movieViewModel
                 )

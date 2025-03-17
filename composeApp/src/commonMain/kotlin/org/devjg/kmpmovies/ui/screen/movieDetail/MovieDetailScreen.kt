@@ -43,7 +43,7 @@ fun MovieDetailScreen(
                                 movie = movie,
                                 cast = cast,
                                 movieSimilar = similarMovies,
-                                navController = navController
+                                navController = navController,
                             )
                         }
                     )

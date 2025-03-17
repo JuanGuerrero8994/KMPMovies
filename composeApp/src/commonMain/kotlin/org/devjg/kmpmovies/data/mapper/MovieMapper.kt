@@ -1,22 +1,25 @@
 package org.devjg.kmpmovies.data.mapper
 
+import org.devjg.kmpmovies.data.core.Constants.NOT_AVAILABLE
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieResponse
+import org.devjg.kmpmovies.data.model.response.person.PersonResponse
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
+import org.devjg.kmpmovies.domain.model.Person
 
 object MovieMapper {
      fun toDomain(movieResponse: MovieResponse): Movie {
         return Movie(
             id = movieResponse.id,
-            title = movieResponse.title,
-            overview = movieResponse.overview,
-            posterUrl = "https://image.tmdb.org/t/p/w500${movieResponse.posterPath}",
-            releaseDate = movieResponse.releaseDate,
-            voteAverage = movieResponse.voteAverage,
-            voteCount = movieResponse.voteCount,
-            popularity = movieResponse.popularity,
-            adult = movieResponse.adult
+            title = movieResponse.title ?: NOT_AVAILABLE,
+            overview = movieResponse.overview ?: NOT_AVAILABLE,
+            posterUrl = "https://image.tmdb.org/t/p/w500${movieResponse.posterPath}" ?: NOT_AVAILABLE,
+            releaseDate = movieResponse.releaseDate ?: NOT_AVAILABLE,
+            voteAverage = movieResponse.voteAverage?: 0.0,
+            voteCount = movieResponse.voteCount ?: 0,
+            popularity = movieResponse.popularity?: 0.0,
+            adult = movieResponse.adult ?: false
         )
     }
 
@@ -48,4 +51,10 @@ object MovieMapper {
             runtime = movieDetailResponse.runtime
         )
     }
+
+    fun toDomainMoviesForActor(cast: List<MovieResponse>): List<Movie> {
+        return cast.map { toDomain(it) } // Convierte cada MovieResponse de la lista a Movie
+    }
+
+
 }

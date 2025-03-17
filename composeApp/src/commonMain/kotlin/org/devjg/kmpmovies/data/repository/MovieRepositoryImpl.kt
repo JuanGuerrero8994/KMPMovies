@@ -8,18 +8,21 @@ import kotlinx.coroutines.flow.flow
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.data.mapper.CastMapper
 import org.devjg.kmpmovies.data.mapper.MovieMapper
+import org.devjg.kmpmovies.data.mapper.PersonMapper
 import org.devjg.kmpmovies.data.model.response.credits.CastResponse
 import org.devjg.kmpmovies.data.model.response.credits.CreditsResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
 import org.devjg.kmpmovies.data.model.response.movie.PopularMoviesResponse
 import org.devjg.kmpmovies.data.model.response.movie.SimilarMoviesResponse
 import org.devjg.kmpmovies.data.model.response.movie.TopRatedMoviesResponse
+import org.devjg.kmpmovies.data.model.response.person.PersonResponse
 import org.devjg.kmpmovies.data.remote.Endpoints
 import org.devjg.kmpmovies.data.remote.TMDBApi
 import org.devjg.kmpmovies.data.remote.buildUrl
 import org.devjg.kmpmovies.domain.model.Cast
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
+import org.devjg.kmpmovies.domain.model.Person
 import org.devjg.kmpmovies.domain.repository.MovieRepository
 
 class MovieRepositoryImpl(
@@ -43,7 +46,7 @@ class MovieRepositoryImpl(
 
     }
 
-    override suspend fun getTopRatedMovies(): Flow<Resource<List<Movie>>> = flow{
+    override suspend fun getTopRatedMovies(): Flow<Resource<List<Movie>>> = flow {
         try {
             val response: TopRatedMoviesResponse =
                 api.httpClient.get { buildUrl(endpoint = Endpoints.TOP_RATED_MOVIES) }.body()
@@ -61,7 +64,14 @@ class MovieRepositoryImpl(
 
     override suspend fun getDetailMovie(movieId: Int): Flow<Resource<MovieDetail>> = flow {
         try {
-            val response: MovieDetailResponse = api.httpClient.get { buildUrl(Endpoints.MOVIE_DETAIL.replace("{movie_id}", movieId.toString())) }.body()
+            val response: MovieDetailResponse = api.httpClient.get {
+                buildUrl(
+                    Endpoints.MOVIE_DETAIL.replace(
+                        "{movie_id}",
+                        movieId.toString()
+                    )
+                )
+            }.body()
 
             val movieMapper = MovieMapper.toDomainDetail(response)
 
@@ -75,14 +85,45 @@ class MovieRepositoryImpl(
         }
     }
 
+    override suspend fun getMovieSimilar(movieId: Int): Flow<Resource<List<Movie>>> = flow {
+        emit(Resource.Loading)
+        try {
+            val response: SimilarMoviesResponse = api.httpClient.get {
+                buildUrl(Endpoints.MOVIE_SIMILAR.replace("{movie_id}", movieId.toString()))
+            }.body()
+
+            val movieMapper = MovieMapper.toDomainList(response.results)
+
+            emit(Resource.Success(movieMapper))
+        } catch (e: JsonConvertException) {
+            emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
+        } catch (e: Exception) {
+            emit(Resource.Error(Exception("Error fetching similar movies: ${e.message}")))
+        }
+    }
+
     override suspend fun getMovieCast(movieId: Int): Flow<Resource<List<Cast>>> = flow {
         try {
             emit(Resource.Loading)
 
-            val response: CreditsResponse = api.httpClient.get { buildUrl(Endpoints.MOVIE_CREDITS.replace("{movie_id}", movieId.toString())) }.body()
+            val response: CreditsResponse = api.httpClient.get {
+                buildUrl(
+                    Endpoints.MOVIE_CREDITS.replace(
+                        "{movie_id}",
+                        movieId.toString()
+                    )
+                )
+            }.body()
+
             val castMapper = CastMapper.toDomainList(response.cast)
 
             emit(Resource.Success(castMapper))
+
+            val firstActor = castMapper.firstOrNull()
+            firstActor?.let { actor ->
+                getPersonDetails(actor.id)
+            }
+
         } catch (e: JsonConvertException) {
             emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
         } catch (e: Exception) {
@@ -90,31 +131,35 @@ class MovieRepositoryImpl(
         }
     }
 
-    override suspend fun getCastDetail(movieId: Int): Flow<Resource<Cast>> = flow {
+
+
+    override suspend fun getPersonDetails(personId: Int): Flow<Resource<Person>> = flow {
         try {
             emit(Resource.Loading)
 
-            // Cambiar el endpoint para obtener detalles del actor
-            val response: CastResponse = api.httpClient.get {
-                buildUrl(Endpoints.PERSON_DETAIL.replace("{person_id}", movieId.toString()))
+            // 🔹 Llamada a la API para obtener los detalles del actor
+            val response: PersonResponse = api.httpClient.get {
+                buildUrl(Endpoints.PERSON_DETAIL.replace("{person_id}", personId.toString()))
             }.body()
 
-            // Mapear la respuesta al dominio
-            val castMapper = CastMapper.toDomain(response)
+            // 🔹 Mapear la respuesta al modelo de dominio `Person`
+            val person = PersonMapper.toDomain(response)
 
-            emit(Resource.Success(castMapper))
+            getMoviesForActor(person.id)
+
+            emit(Resource.Success(person))
         } catch (e: JsonConvertException) {
             emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
         } catch (e: Exception) {
-            emit(Resource.Error(Exception("Error fetching cast detail: ${e.message}")))
+            emit(Resource.Error(Exception("Error fetching person details: ${e.message}")))
         }
     }
 
-    override suspend fun getMovieSimilar(movieId: Int): Flow<Resource<List<Movie>>> = flow {
+    override suspend fun getMoviesForActor(personId: Int): Flow<Resource<List<Movie>>> = flow {
         emit(Resource.Loading)
         try {
             val response: SimilarMoviesResponse = api.httpClient.get {
-                buildUrl(Endpoints.MOVIE_SIMILAR.replace("{movie_id}", movieId.toString()))
+                buildUrl(Endpoints.PERSON_MOVIE_CREDITS.replace("{person_id}", personId.toString()))
             }.body()
 
             val movieMapper = MovieMapper.toDomainList(response.results)
