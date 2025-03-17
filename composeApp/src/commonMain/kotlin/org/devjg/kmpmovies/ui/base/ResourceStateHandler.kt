@@ -1,7 +1,9 @@
 package org.devjg.kmpmovies.ui.base
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -26,7 +28,6 @@ fun <T> ResourceStateHandler(
     loadingContent: @Composable (LoadingType) -> Unit = { type ->
         when (type) {
             LoadingType.Carrousel -> {
-
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
@@ -34,11 +35,12 @@ fun <T> ResourceStateHandler(
             LoadingType.Card -> {
 
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    ShimmerCard()
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        ShimmerCard()
+                    }
                 }
             }
             LoadingType.Detail -> {
-
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }

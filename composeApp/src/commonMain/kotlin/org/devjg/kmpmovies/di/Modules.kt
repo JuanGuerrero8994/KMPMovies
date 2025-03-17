@@ -6,6 +6,7 @@ import org.devjg.kmpmovies.data.repository.MovieRepositoryImpl
 import org.devjg.kmpmovies.data.repository.TVShowRepositoryImpl
 import org.devjg.kmpmovies.domain.repository.MovieRepository
 import org.devjg.kmpmovies.domain.repository.TVShowRepository
+import org.devjg.kmpmovies.domain.usecases.GetCastDetailUseCase
 import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieCastUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieSimilarUseCase
@@ -32,13 +33,12 @@ private val domainModule = module {
     factory { GetDetailMovieUseCase(get()) }
     factory { GetMovieCastUseCase(get()) }
     factory { GetMovieSimilarUseCase(get()) }
-
-
+    factory { GetCastDetailUseCase(get()) }
 }
 
 
 private val viewModelModule = module {
-    viewModel { MovieViewModel(get(),get(),get(),get(),get()) }
+    viewModel { MovieViewModel(get(),get(),get(),get(),get(),get()) }
     viewModel { TVShowViewModel(get()) }
 }
 

@@ -17,6 +17,9 @@ object Endpoints {
 
     const val MOVIE_SIMILAR = "/movie/{movie_id}/similar"
 
+    //PERSON
+    const val PERSON_DETAIL = "/person/{person_id}"
+
 
     // TV or SERIES
 

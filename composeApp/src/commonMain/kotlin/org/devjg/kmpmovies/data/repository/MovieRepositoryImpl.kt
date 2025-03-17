@@ -1,6 +1,5 @@
 package org.devjg.kmpmovies.data.repository
 
-import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.serialization.JsonConvertException
@@ -9,6 +8,7 @@ import kotlinx.coroutines.flow.flow
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.data.mapper.CastMapper
 import org.devjg.kmpmovies.data.mapper.MovieMapper
+import org.devjg.kmpmovies.data.model.response.credits.CastResponse
 import org.devjg.kmpmovies.data.model.response.credits.CreditsResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
 import org.devjg.kmpmovies.data.model.response.movie.PopularMoviesResponse
@@ -87,6 +87,26 @@ class MovieRepositoryImpl(
             emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
         } catch (e: Exception) {
             emit(Resource.Error(Exception("Error fetching cast: ${e.message}")))
+        }
+    }
+
+    override suspend fun getCastDetail(movieId: Int): Flow<Resource<Cast>> = flow {
+        try {
+            emit(Resource.Loading)
+
+            // Cambiar el endpoint para obtener detalles del actor
+            val response: CastResponse = api.httpClient.get {
+                buildUrl(Endpoints.PERSON_DETAIL.replace("{person_id}", movieId.toString()))
+            }.body()
+
+            // Mapear la respuesta al dominio
+            val castMapper = CastMapper.toDomain(response)
+
+            emit(Resource.Success(castMapper))
+        } catch (e: JsonConvertException) {
+            emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
+        } catch (e: Exception) {
+            emit(Resource.Error(Exception("Error fetching cast detail: ${e.message}")))
         }
     }
 

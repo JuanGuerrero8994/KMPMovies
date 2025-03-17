@@ -18,16 +18,28 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import org.devjg.kmpmovies.domain.model.Movie
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
 
 
 @Composable
 fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
     var currentIndex by remember { mutableStateOf(0) }
+    var isFading by remember { mutableStateOf(false) }
+
+    val alpha by animateFloatAsState(
+        targetValue = if (isFading) 0.3f else 1f,
+        animationSpec = tween(1000),
+        label = "alphaAnimation"
+    )
 
     LaunchedEffect(movies) {
         while (true) {
-            delay(4000)
+            delay(2500)
+            isFading = true
+            delay(1500)
             currentIndex = (currentIndex + 1) % movies.size
+            isFading = false
         }
     }
 
@@ -41,10 +53,17 @@ fun MovieCarouselView(movies: List<Movie>, navController: NavController) {
         ) {
             itemsIndexed(movies) { index, movie ->
                 if (index == currentIndex) {
-                    MovieCarouselItem(movie,navController)
+                    MovieCarouselItem(
+                        movie = movie,
+                        navController = navController,
+                        alpha = alpha // Pasamos la opacidad animada
+                    )
                 }
             }
         }
     }
 }
+
+
+
 

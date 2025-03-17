@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import org.devjg.kmpmovies.ui.components.scaffold.BottomNavScreen
 import org.devjg.kmpmovies.ui.components.scaffold.ScaffoldComponent
 import org.devjg.kmpmovies.ui.screen.account.AccountScreen
+import org.devjg.kmpmovies.ui.screen.castDetail.CastDetailScreen
 import org.devjg.kmpmovies.ui.screen.favourite.FavouriteScreen
 import org.devjg.kmpmovies.ui.screen.home.HomeScreen
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -40,6 +41,22 @@ fun NavGraph(navController: NavHostController) {
 
                 val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
                 MovieDetailScreen(movieId = movieId,movieViewModel, navController = navController)
+            }
+
+            addRouteWithArgs(
+                navController = navController,
+                route = Destinations.CastDetailScreen.route,
+                arguments = listOf(
+                    navArgument("castId") { type = NavType.IntType }
+                )
+            ) { _, backStackEntry ->
+
+                val castId = backStackEntry.arguments?.getInt("castId") ?: 0
+                CastDetailScreen(
+                    castId = castId,
+                    navController = navController,
+                    movieViewModel = movieViewModel
+                )
             }
         }
     }

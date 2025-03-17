@@ -1,4 +1,4 @@
-package org.devjg.kmpmovies.ui.components.movie
+package org.devjg.kmpmovies.ui.components.movieDetail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
