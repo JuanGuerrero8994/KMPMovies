@@ -1,7 +1,12 @@
+import com.android.build.api.dsl.Packaging
+import com.android.tools.r8.internal.JS
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -20,7 +25,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -38,7 +42,7 @@ kotlin {
     }
     
     jvm("desktop")
-    
+
     /*@OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -58,7 +62,26 @@ kotlin {
         }
         binaries.executable()
     }*/
-    
+
+    js(IR) {
+        moduleName = "composeApp"
+        browser {
+            val rootDirPath = project.rootDir.path
+            val projectDirPath = project.projectDir.path
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        add(rootDirPath)
+                        add(projectDirPath)
+                    }
+                }
+
+            }
+        }
+        binaries.executable()
+    }
+
     sourceSets {
         val desktopMain by getting
         val commonTest by getting
@@ -69,6 +92,9 @@ kotlin {
 
             //KTOR ANDROID
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.ktor.client.cio)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -86,7 +112,6 @@ kotlin {
 
             //KTOR
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
@@ -109,7 +134,19 @@ kotlin {
             //NAPIER LOGS
             implementation(libs.napier)
 
+            //HAZE
+            implementation(libs.haze)
 
+
+            //SHIMMER
+            implementation(libs.compose.shimmer)
+
+
+            // Exclude the logback dependencies to avoid duplicate META-INF files
+            configurations.all {
+                exclude(group = "ch.qos.logback", module = "logback-classic")
+                exclude(group = "ch.qos.logback", module = "logback-core")
+            }
         }
 
         commonTest{
@@ -118,8 +155,6 @@ kotlin {
                 implementation(libs.koinTest)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.turbine)
-
-
             }
         }
 
@@ -131,13 +166,17 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.cio)
+
+        }
+        jsMain.dependencies {
+            // KTOR JS
+            implementation("io.ktor:ktor-client-js:2.3.6")  // Ensure you're using the correct version
         }
     }
 }
 
 android {
-
-
     namespace = "org.devjg.kmpmovies"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -148,22 +187,25 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            exclude("META-INF/INDEX.LIST") // Exclude the conflicting INDEX.LIST
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
 dependencies {
     debugImplementation(compose.uiTooling)
 }

@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun TopAppBarComponent() {
+fun TopAppBarComponent(title:String) {
     TopAppBar(
         title = {
             Row(
@@ -18,7 +18,7 @@ fun TopAppBarComponent() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Netflix")
+                Text(title)
             }
         },
     )

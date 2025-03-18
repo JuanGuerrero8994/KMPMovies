@@ -1,0 +1,2 @@
+resolve.fallback: { "path": false }
+
