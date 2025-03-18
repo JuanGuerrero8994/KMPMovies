@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.devjg.kmpmovies.domain.model.Cast
-import org.devjg.kmpmovies.domain.model.MovieDetail
-import org.devjg.kmpmovies.domain.model.Person
 import org.devjg.kmpmovies.ui.navigation.Destinations
 
 
@@ -71,8 +69,8 @@ fun CastCard(
 
 
 private fun navigateToCastDetail(navController: NavController,cast: Cast){
-    navController.navigate(Destinations.CastDetailScreen.createRoute(movieId = cast.id)){
-        popUpTo(Destinations.CastDetailScreen.route) { inclusive = true }
+    navController.navigate(Destinations.PersonDetailScreen.createRoute(personId = cast.id)){
+        popUpTo(Destinations.PersonDetailScreen.route) { inclusive = true }
         launchSingleTop = true
     }
 }

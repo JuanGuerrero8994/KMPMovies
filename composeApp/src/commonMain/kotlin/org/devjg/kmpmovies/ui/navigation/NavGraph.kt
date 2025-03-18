@@ -45,17 +45,16 @@ fun NavGraph(navController: NavHostController) {
 
             addRouteWithArgs(
                 navController = navController,
-                route = Destinations.CastDetailScreen.route,
+                route = Destinations.PersonDetailScreen.route,
                 arguments = listOf(
-                    navArgument("movieId") { type = NavType.IntType },
-                    navArgument("personId") { type = NavType.IntType }
+                    navArgument("personId") { type = NavType.IntType },
                 )
             ) { _, backStackEntry ->
 
-                val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+                val personId = backStackEntry.arguments?.getInt("personId") ?: 0
 
                 PersonDetailScreen(
-                    movieId = movieId,
+                    personId = personId,
                     navController = navController,
                     movieViewModel = movieViewModel
                 )

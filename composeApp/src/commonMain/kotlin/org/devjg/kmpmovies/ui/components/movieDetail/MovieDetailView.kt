@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
+import org.devjg.kmpmovies.data.core.Resource
+import org.devjg.kmpmovies.data.mapper.CastMapper
 import org.devjg.kmpmovies.domain.model.Cast
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
@@ -134,9 +136,8 @@ fun MovieDetailView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp) 
             ) {
                 items(cast) { cast ->
-                    CastCard(cast = cast,navController)
+                    CastCard(cast = cast, navController)
                 }
-
             }
             Spacer(modifier = Modifier.height(8.dp))
 

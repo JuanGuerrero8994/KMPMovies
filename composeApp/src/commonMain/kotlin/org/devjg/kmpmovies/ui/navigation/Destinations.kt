@@ -19,9 +19,9 @@ sealed class Destinations(val route: String) {
         fun createRoute(movieId: Int): String = "movieDetailScreen/$movieId"
     }
 
-    //CastDetailScreen
-    data object CastDetailScreen : Destinations("castDetailScreen/{movieId}"){
-        fun createRoute(movieId: Int): String = "castDetailScreen/$movieId"
+    //PersonDetailScreen
+    data object PersonDetailScreen : Destinations("personDetailScreen/{personId}"){
+        fun createRoute(personId: Int): String = "personDetailScreen/$personId"
     }
 
 

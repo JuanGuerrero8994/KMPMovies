@@ -3,13 +3,11 @@ package org.devjg.kmpmovies.data.mapper
 import org.devjg.kmpmovies.data.core.Constants.NOT_AVAILABLE
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieResponse
-import org.devjg.kmpmovies.data.model.response.person.PersonResponse
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
-import org.devjg.kmpmovies.domain.model.Person
 
 object MovieMapper {
-     fun toDomain(movieResponse: MovieResponse): Movie {
+     private fun toDomain(movieResponse: MovieResponse): Movie {
         return Movie(
             id = movieResponse.id,
             title = movieResponse.title ?: NOT_AVAILABLE,
@@ -53,7 +51,7 @@ object MovieMapper {
     }
 
     fun toDomainMoviesForActor(cast: List<MovieResponse>): List<Movie> {
-        return cast.map { toDomain(it) } // Convierte cada MovieResponse de la lista a Movie
+        return cast.map { toDomain(it) }
     }
 
 

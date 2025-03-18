@@ -20,8 +20,7 @@ object Endpoints {
     //PERSON
     const val PERSON_DETAIL = "/person/{person_id}"
 
-    const val PERSON_MOVIE_CREDITS = "/person/{person_id}/movie_credits"  // Nuevo endpoint para obtener películas de un actor
-
+    const val PERSON_MOVIE_CREDITS = "/person/{person_id}/movie_credits"
 
 
     // TV or SERIES

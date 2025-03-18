@@ -14,6 +14,8 @@ import kotlinx.coroutines.test.setMain
 import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.TVShow
 import org.devjg.kmpmovies.domain.repository.TVShowRepository
+import org.devjg.kmpmovies.domain.usecases.GetDetailPersonUseCase
+import org.devjg.kmpmovies.domain.usecases.GetMoviesForActorUseCase
 import org.devjg.kmpmovies.domain.usecases.GetTVShowTopRatedUseCase
 import org.devjg.kmpmovies.ui.screen.tvShowTopRated.TVShowViewModel
 import org.koin.core.context.startKoin

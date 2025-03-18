@@ -1,5 +1,6 @@
 package org.devjg.kmpmovies.data.repository
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.serialization.JsonConvertException
@@ -9,11 +10,11 @@ import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.data.mapper.CastMapper
 import org.devjg.kmpmovies.data.mapper.MovieMapper
 import org.devjg.kmpmovies.data.mapper.PersonMapper
-import org.devjg.kmpmovies.data.model.response.credits.CastResponse
 import org.devjg.kmpmovies.data.model.response.credits.CreditsResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
+import org.devjg.kmpmovies.data.model.response.movie.MovieForActorResponse
+import org.devjg.kmpmovies.data.model.response.movie.MovieSimilarResponse
 import org.devjg.kmpmovies.data.model.response.movie.PopularMoviesResponse
-import org.devjg.kmpmovies.data.model.response.movie.SimilarMoviesResponse
 import org.devjg.kmpmovies.data.model.response.movie.TopRatedMoviesResponse
 import org.devjg.kmpmovies.data.model.response.person.PersonResponse
 import org.devjg.kmpmovies.data.remote.Endpoints
@@ -88,7 +89,7 @@ class MovieRepositoryImpl(
     override suspend fun getMovieSimilar(movieId: Int): Flow<Resource<List<Movie>>> = flow {
         emit(Resource.Loading)
         try {
-            val response: SimilarMoviesResponse = api.httpClient.get {
+            val response: MovieSimilarResponse = api.httpClient.get {
                 buildUrl(Endpoints.MOVIE_SIMILAR.replace("{movie_id}", movieId.toString()))
             }.body()
 
@@ -119,10 +120,6 @@ class MovieRepositoryImpl(
 
             emit(Resource.Success(castMapper))
 
-            val firstActor = castMapper.firstOrNull()
-            firstActor?.let { actor ->
-                getPersonDetails(actor.id)
-            }
 
         } catch (e: JsonConvertException) {
             emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))
@@ -137,15 +134,14 @@ class MovieRepositoryImpl(
         try {
             emit(Resource.Loading)
 
-            // 🔹 Llamada a la API para obtener los detalles del actor
             val response: PersonResponse = api.httpClient.get {
                 buildUrl(Endpoints.PERSON_DETAIL.replace("{person_id}", personId.toString()))
             }.body()
 
-            // 🔹 Mapear la respuesta al modelo de dominio `Person`
+            Napier.d { "Respuesta PERSON DETAILS :${response} "}
+
             val person = PersonMapper.toDomain(response)
 
-            getMoviesForActor(person.id)
 
             emit(Resource.Success(person))
         } catch (e: JsonConvertException) {
@@ -158,11 +154,11 @@ class MovieRepositoryImpl(
     override suspend fun getMoviesForActor(personId: Int): Flow<Resource<List<Movie>>> = flow {
         emit(Resource.Loading)
         try {
-            val response: SimilarMoviesResponse = api.httpClient.get {
+            val response:MovieForActorResponse = api.httpClient.get {
                 buildUrl(Endpoints.PERSON_MOVIE_CREDITS.replace("{person_id}", personId.toString()))
             }.body()
 
-            val movieMapper = MovieMapper.toDomainList(response.results)
+            val movieMapper = MovieMapper.toDomainMoviesForActor(response.cast ?: emptyList())
 
             emit(Resource.Success(movieMapper))
         } catch (e: JsonConvertException) {

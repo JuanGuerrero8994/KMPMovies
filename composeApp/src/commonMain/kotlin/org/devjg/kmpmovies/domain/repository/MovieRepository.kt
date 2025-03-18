@@ -14,7 +14,6 @@ interface MovieRepository {
     suspend fun getDetailMovie(movieId:Int):Flow<Resource<MovieDetail>>
     suspend fun getMovieCast(movieId: Int): Flow<Resource<List<Cast>>>
     suspend fun getMovieSimilar(movieId: Int):Flow<Resource<List<Movie>>>
-    suspend fun getMoviesForActor(personId:Int):Flow<Resource<List<Movie>>>
     suspend fun getPersonDetails(personId:Int):Flow<Resource<Person>>
-
+    suspend fun getMoviesForActor(personId:Int):Flow<Resource<List<Movie>>>
 }
