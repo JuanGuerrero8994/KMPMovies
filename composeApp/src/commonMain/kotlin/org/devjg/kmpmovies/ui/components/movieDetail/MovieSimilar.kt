@@ -1,4 +1,4 @@
-package org.devjg.kmpmovies.ui.components.movie
+package org.devjg.kmpmovies.ui.components.movieDetail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.devjg.kmpmovies.domain.model.Movie
+import org.devjg.kmpmovies.ui.base.RatingStars
 import org.devjg.kmpmovies.ui.navigation.Destinations
 
 @Composable
@@ -27,12 +28,7 @@ fun MovieSimilarCard(movie: Movie, navController: NavController) {
         modifier = Modifier
             .width(150.dp)
             .height(250.dp)
-            .clickable {
-                navController.navigate(Destinations.MovieDetailScreen.createRoute(movie.id)){
-                    popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true }
-                    launchSingleTop = true
-                }
-            },
+            .clickable { navigateToDetailScreen(navController,movie) },
         shape = RoundedCornerShape(8.dp),
         elevation = 4.dp
     ) {
@@ -47,6 +43,18 @@ fun MovieSimilarCard(movie: Movie, navController: NavController) {
             Spacer(modifier = Modifier.padding(8.dp))
 
             Text(movie.title, color = Color.White, fontSize = 15.sp)
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            RatingStars(movie.voteAverage ?: 0.0)
         }
+    }
+}
+
+
+private fun navigateToDetailScreen(navController: NavController,movie:Movie){
+    navController.navigate(Destinations.MovieDetailScreen.createRoute(movie.id)){
+        popUpTo(Destinations.MovieDetailScreen.route) { inclusive = true }
+        launchSingleTop = true
     }
 }

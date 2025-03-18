@@ -36,7 +36,6 @@ fun MovieCard(movie: Movie, navController: NavController) {
 
     val shouldAnimate = remember { true }
 
-
     val offset by animateFloatAsState(
         targetValue = if (shouldAnimate) 0f else 1000f,
         animationSpec = tween(durationMillis = 5000)
@@ -79,6 +78,7 @@ fun MovieCard(movie: Movie, navController: NavController) {
                 lineHeight = 18.sp,
             )
             Spacer(modifier = Modifier.height(4.dp))
+
             RatingStars(movie.voteAverage ?: 0.0)
         }
     }

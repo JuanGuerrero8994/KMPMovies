@@ -15,12 +15,13 @@ import androidx.navigation.NavController
 @Composable
 fun ScaffoldComponent(
     navController: NavController,
+    title: String,
     content: @Composable () -> Unit
 ) {
 
     Scaffold(
         topBar = {
-            TopAppBarComponent()
+            TopAppBarComponent(title = title)
         },
 
         bottomBar = {

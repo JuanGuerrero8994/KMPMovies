@@ -15,8 +15,10 @@ import org.devjg.kmpmovies.data.core.Resource
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.repository.MovieRepository
 import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
+import org.devjg.kmpmovies.domain.usecases.GetDetailPersonUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieCastUseCase
 import org.devjg.kmpmovies.domain.usecases.GetMovieSimilarUseCase
+import org.devjg.kmpmovies.domain.usecases.GetMoviesForActorUseCase
 import org.devjg.kmpmovies.domain.usecases.GetPopularMoviesUseCase
 import org.devjg.kmpmovies.domain.usecases.GetTopRatedMoviesUseCase
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
@@ -41,6 +43,8 @@ class GetPopularMovieTest : KoinTest {
     private val getDetailMovieUseCase = GetDetailMovieUseCase(movieRepository)
     private val getMovieCastUseCase = GetMovieCastUseCase(movieRepository)
     private val getMovieSimilarUseCase = GetMovieSimilarUseCase(movieRepository)
+    private val getDetailPersonUseCase = GetDetailPersonUseCase(movieRepository)
+    private val getMoviesForActorUseCase = GetMoviesForActorUseCase(movieRepository)
 
 
     private lateinit var viewModel: MovieViewModel
@@ -56,7 +60,7 @@ class GetPopularMovieTest : KoinTest {
             factory { getDetailMovieUseCase }
             factory { getMovieCastUseCase }
             factory { getMovieSimilarUseCase }
-            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase,getDetailMovieUseCase,getMovieCastUseCase,getMovieSimilarUseCase) }
+            factory { MovieViewModel(getPopularMoviesUseCase, getTopRatedMoviesUseCase,getDetailMovieUseCase,getMovieCastUseCase,getMovieSimilarUseCase,getDetailPersonUseCase,getMoviesForActorUseCase) }
         }
 
         startKoin { modules(testModule) }

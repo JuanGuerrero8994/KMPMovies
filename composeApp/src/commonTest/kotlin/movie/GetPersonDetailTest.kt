@@ -1,6 +1,7 @@
 package movie
 
-import org.devjg.kmpmovies.domain.model.MovieDetail
+import org.devjg.kmpmovies.domain.model.Person
+
 
 import app.cash.turbine.test
 import dev.mokkery.answering.returns
@@ -14,6 +15,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.devjg.kmpmovies.data.core.Resource
+import org.devjg.kmpmovies.domain.model.MovieDetail
 import org.devjg.kmpmovies.domain.repository.MovieRepository
 import org.devjg.kmpmovies.domain.usecases.GetDetailMovieUseCase
 import org.devjg.kmpmovies.domain.usecases.GetDetailPersonUseCase
@@ -35,7 +37,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetDetailMovieTest : KoinTest {
+class GetPersonDetailTest : KoinTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val movieRepository: MovieRepository = mock()
@@ -51,7 +53,7 @@ class GetDetailMovieTest : KoinTest {
 
     @BeforeTest
     fun setup() {
-        Dispatchers.setMain(testDispatcher) 
+        Dispatchers.setMain(testDispatcher)
 
         val testModule = module {
             single { movieRepository }
@@ -75,38 +77,44 @@ class GetDetailMovieTest : KoinTest {
     }
 
     @Test
-    fun `fetchMovieDetail should handle success with mock data`() = runTest {
-        val mockMovie = MovieDetail(id = 1, title = "Mock Movie")
+    fun `fetchPersonDetail should handle success with mock data`() = runTest {
+        val mockMovie = MovieDetail(id = 1,"Mission Imposible")
 
         everySuspend { movieRepository.getDetailMovie(1) } returns flow {
             emit(Resource.Success(mockMovie))
         }
 
-        viewModel.fetchMovieDetail(1)
+        val mockPerson = Person(id = 1,"Tom Cruise")
 
-        viewModel.movieDetailState.test {
+        everySuspend { movieRepository.getPersonDetails(1) } returns flow {
+            emit(Resource.Success(mockPerson))
+        }
+
+        viewModel.fetchDetailPerson(1)
+
+        viewModel.personState.test {
             assertTrue(awaitItem() is Resource.Loading)
             val result = awaitItem()
             assertTrue(result is Resource.Success)
-            assertEquals(mockMovie, result.data)
+            assertEquals(mockPerson, result.data)
             expectNoEvents()
         }
     }
 
     @Test
-    fun `fetchMovieDetail should handle an exception correctly`() = runTest {
-        everySuspend { movieRepository.getDetailMovie(1) } returns flow {
+    fun `fetchPersonDetail should handle an exception correctly`() = runTest {
+        everySuspend { movieRepository.getPersonDetails(1) } returns flow {
             emit(Resource.Loading)
-            emit(Resource.Error(Exception("Movie not found")))
+            emit(Resource.Error(Exception("Person not found")))
         }
 
-        viewModel.fetchMovieDetail(1)
+        viewModel.fetchDetailPerson(1)
 
-        viewModel.movieDetailState.test {
+        viewModel.personState.test {
             assertTrue(awaitItem() is Resource.Loading)
             val result = awaitItem()
             assertTrue(result is Resource.Error)
-            assertTrue(result.exception.message!!.contains("Movie not found"))
+            assertTrue(result.exception.message!!.contains("Person not found"))
             expectNoEvents()
         }
     }

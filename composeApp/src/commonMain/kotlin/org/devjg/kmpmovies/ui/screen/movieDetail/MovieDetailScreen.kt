@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import org.devjg.kmpmovies.ui.base.LoadingType
 import org.devjg.kmpmovies.ui.base.ResourceStateHandler
-import org.devjg.kmpmovies.ui.components.movie.MovieDetailView
+import org.devjg.kmpmovies.ui.components.movieDetail.MovieDetailView
 import org.devjg.kmpmovies.ui.screen.movie.MovieViewModel
 
 
@@ -43,7 +43,7 @@ fun MovieDetailScreen(
                                 movie = movie,
                                 cast = cast,
                                 movieSimilar = similarMovies,
-                                navController = navController
+                                navController = navController,
                             )
                         }
                     )
