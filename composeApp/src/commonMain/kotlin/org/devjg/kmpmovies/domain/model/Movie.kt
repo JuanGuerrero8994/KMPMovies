@@ -9,5 +9,6 @@ data class Movie(
     val voteAverage: Double? = null,
     val voteCount: Int? = null,
     val popularity: Double? = null,
-    val adult:Boolean? = null
+    val adult:Boolean? = null,
+    val trailerUrl:String? = null
 )

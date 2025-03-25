@@ -17,6 +17,7 @@ import org.devjg.kmpmovies.data.model.response.movie.MovieSimilarResponse
 import org.devjg.kmpmovies.data.model.response.movie.PopularMoviesResponse
 import org.devjg.kmpmovies.data.model.response.movie.TopRatedMoviesResponse
 import org.devjg.kmpmovies.data.model.response.person.PersonResponse
+import org.devjg.kmpmovies.data.model.response.video.MovieVideoResponse
 import org.devjg.kmpmovies.data.remote.Endpoints
 import org.devjg.kmpmovies.data.remote.TMDBApi
 import org.devjg.kmpmovies.data.remote.buildUrl
@@ -74,9 +75,24 @@ class MovieRepositoryImpl(
                 )
             }.body()
 
-            val movieMapper = MovieMapper.toDomainDetail(response)
+            val videoResponse: MovieVideoResponse = api.httpClient.get {
+                buildUrl(
+                    Endpoints.VIDEO_TRAILER.replace(
+                        "{movie_id}",
+                        movieId.toString()
+                    )
+                )
+            }.body()
 
-            emit(Resource.Success(movieMapper))
+            val trailerUrl = videoResponse.results
+                .firstOrNull { it.type == "Trailer" && it.site == "YouTube" }?.let {
+                    "https://www.youtube.com/embed/${it.key}"
+                }
+
+
+            val movieDetail = MovieMapper.toDomainDetail(response, trailerUrl)
+
+            emit(Resource.Success(movieDetail))
 
         } catch (e: JsonConvertException) {
             emit(Resource.Error(Exception("JSON conversion error: ${e.message}")))

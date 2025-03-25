@@ -22,9 +22,11 @@ object Endpoints {
 
     const val PERSON_MOVIE_CREDITS = "/person/{person_id}/movie_credits"
 
+    //VIDEO
+    const val VIDEO_TRAILER ="/movie/{movie_id}/videos"
+
 
     // TV or SERIES
-
     const val TOP_RATED_TV_SHOW ="tv/top_rated"
 
     const val TV_DETAIL = "/tv/{tv_id}"

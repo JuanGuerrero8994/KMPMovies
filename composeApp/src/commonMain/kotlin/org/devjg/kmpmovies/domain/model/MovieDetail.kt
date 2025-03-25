@@ -16,7 +16,8 @@ data class MovieDetail(
     val collection: Collection? = null,
     val budget: Int? = null,
     val revenue: Int? = null,
-    val runtime: Int? = null
+    val runtime: Int? = null,
+    val trailerUrl:String? = null
 ) {
     
     data class Collection(
