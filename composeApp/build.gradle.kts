@@ -96,6 +96,7 @@ kotlin {
             implementation(libs.ktor.client.cio)
 
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -141,6 +142,8 @@ kotlin {
             //SHIMMER
             implementation(libs.compose.shimmer)
 
+            //MEDIA PLAYER
+
 
             // Exclude the logback dependencies to avoid duplicate META-INF files
             configurations.all {
@@ -171,7 +174,7 @@ kotlin {
         }
         jsMain.dependencies {
             // KTOR JS
-            implementation("io.ktor:ktor-client-js:2.3.6")  // Ensure you're using the correct version
+            implementation(libs.ktor.client.js)  // Ensure you're using the correct version
         }
     }
 }
@@ -209,6 +212,7 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
+
 
 compose.desktop {
     application {

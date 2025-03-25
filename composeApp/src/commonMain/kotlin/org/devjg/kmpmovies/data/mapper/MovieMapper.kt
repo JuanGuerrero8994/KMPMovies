@@ -3,6 +3,7 @@ package org.devjg.kmpmovies.data.mapper
 import org.devjg.kmpmovies.data.core.Constants.NOT_AVAILABLE
 import org.devjg.kmpmovies.data.model.response.movie.MovieDetailResponse
 import org.devjg.kmpmovies.data.model.response.movie.MovieResponse
+import org.devjg.kmpmovies.data.model.response.video.MovieVideoResponse
 import org.devjg.kmpmovies.domain.model.Movie
 import org.devjg.kmpmovies.domain.model.MovieDetail
 
@@ -17,14 +18,14 @@ object MovieMapper {
             voteAverage = movieResponse.voteAverage?: 0.0,
             voteCount = movieResponse.voteCount ?: 0,
             popularity = movieResponse.popularity?: 0.0,
-            adult = movieResponse.adult ?: false
+            adult = movieResponse.adult ?: false,
         )
     }
 
     fun toDomainList(movieResponseList: List<MovieResponse>): List<Movie> = movieResponseList.map { toDomain(it) }
 
 
-    fun toDomainDetail(movieDetailResponse: MovieDetailResponse): MovieDetail {
+    fun toDomainDetail(movieDetailResponse: MovieDetailResponse,trailerUrl: String?=null): MovieDetail {
         return MovieDetail(
             id = movieDetailResponse.id,
             title = movieDetailResponse.title,
@@ -46,13 +47,15 @@ object MovieMapper {
             },
             budget = movieDetailResponse.budget,
             revenue = movieDetailResponse.revenue,
-            runtime = movieDetailResponse.runtime
+            runtime = movieDetailResponse.runtime,
+            trailerUrl = trailerUrl
         )
     }
 
     fun toDomainMoviesForActor(cast: List<MovieResponse>): List<Movie> {
         return cast.map { toDomain(it) }
     }
+
 
 
 }

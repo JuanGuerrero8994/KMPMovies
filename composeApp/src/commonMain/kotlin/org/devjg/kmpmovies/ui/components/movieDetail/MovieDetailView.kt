@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +49,11 @@ fun MovieDetailView(
     cast: List<Cast>,
     navController: NavController
 ) {
+    val state = rememberWebViewState("https://example.com")
+
+    // Estado para controlar la visibilidad del trailer
+    var showTrailer by remember { mutableStateOf(false) }
+
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item {
             IconButton(
@@ -64,19 +71,26 @@ fun MovieDetailView(
         item {
             Row {
                 Image(
-                    painter = rememberAsyncImagePainter(model = movie.backdropUrl ?: movie.posterUrl),
+                    painter = rememberAsyncImagePainter(
+                        model = movie.backdropUrl ?: movie.posterUrl
+                    ),
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f)
+                        .then(
+                            if (showTrailer) Modifier.blur(10.dp) else Modifier
+                        )
                 )
             }
-        }
 
+        }
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
         item {
             Text(
-                text = movie.title ?:"",
+                text = movie.title ?: "",
                 style = MaterialTheme.typography.h5,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -84,12 +98,16 @@ fun MovieDetailView(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Release Date: ${movie.releaseDate}", color = Color.White,fontWeight = FontWeight.Bold)
+            Text(
+                text = "Release Date: ${movie.releaseDate}",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Row {
-                Text("Vote Average:" , color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Vote Average:", color = Color.White, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.padding(2.dp))
                 RatingStars(movie.voteAverage ?: 0.0)
             }
@@ -115,7 +133,8 @@ fun MovieDetailView(
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { expanded = !expanded },
-                    style = MaterialTheme.typography.body2,)
+                    style = MaterialTheme.typography.body2,
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -133,7 +152,7 @@ fun MovieDetailView(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) 
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(cast) { cast ->
                     CastCard(cast = cast, navController)
@@ -145,7 +164,7 @@ fun MovieDetailView(
                 "Similar Movies",
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
-                color=Color.White
+                color = Color.White
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -154,7 +173,7 @@ fun MovieDetailView(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) 
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(movieSimilar) { movie ->
                     MovieSimilarCard(
