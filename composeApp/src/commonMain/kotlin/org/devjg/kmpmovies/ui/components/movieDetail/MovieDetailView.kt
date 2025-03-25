@@ -49,7 +49,6 @@ fun MovieDetailView(
     cast: List<Cast>,
     navController: NavController
 ) {
-    val state = rememberWebViewState("https://example.com")
 
     // Estado para controlar la visibilidad del trailer
     var showTrailer by remember { mutableStateOf(false) }
