@@ -19,4 +19,6 @@ data class MovieResponse(
     @SerialName("original_language") val originalLanguage: String?,
     @SerialName("original_title") val originalTitle: String?,
     @SerialName("video") val video: Boolean?
+
+
 )

@@ -2,6 +2,7 @@ package org.devjg.kmpmovies.data.model.response.movie
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.devjg.kmpmovies.data.model.response.video.MovieVideoResponse
 
 @Serializable
 data class MovieDetailResponse(
@@ -29,7 +30,9 @@ data class MovieDetailResponse(
     @SerialName("title") val title: String,
     @SerialName("video") val video: Boolean,
     @SerialName("vote_average") val voteAverage: Double,
-    @SerialName("vote_count") val voteCount: Int
+    @SerialName("vote_count") val voteCount: Int,
+    @SerialName("videos") var videos: MovieVideoResponse? = null
+
 )
 
 @Serializable
